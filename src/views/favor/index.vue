@@ -9,7 +9,7 @@
             <AlbumInfo :albumID="item.id"/>
           </template>
           <template #title>
-            <span>{{ item.name }}</span>
+            <span class="info-title">{{ item.name }}</span>
           </template>
           <div class="fav-item">
             <img :src="parseCover(item.id)" class="cover"/>
@@ -87,6 +87,10 @@
     box-shadow: 0 0 10px 0 purple;
   }
 
+  .info-title{
+    font-size: 1.2em;
+    font-weight: bold;
+  }
   /*.fav-item::after {*/
   /*  position: absolute;*/
   /*  content: "";*/
@@ -127,6 +131,17 @@
   @media (max-width: 750px) {
     #fav-list {
       grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (max-width: 512px) {
+    .cover {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+    }
+    .main{
+      min-width: 350px;
     }
   }
 </style>

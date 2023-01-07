@@ -1,6 +1,27 @@
 <template>
   <a-skeleton :loading="loading" active>
-    <p>{{ albumInfo }}</p>
+    <a-descriptions v-if="albumInfo" :column="1" class="info-card">
+      <a-descriptions-item label="禁漫号">{{ albumInfo.id }}</a-descriptions-item>
+      <a-descriptions-item label="作者">
+        <span v-for="author in albumInfo.author" :key="author">{{ author }}，</span>
+      </a-descriptions-item>
+      <a-descriptions-item label="标签">
+        <div class="tag-wrapper">
+          <a-tag v-for="tag in albumInfo.tags" :key="tag" color="blue">{{ tag }}</a-tag>
+        </div>
+      </a-descriptions-item>
+      <a-descriptions-item label="简介">
+        {{ albumInfo.description }}
+      </a-descriptions-item>
+      <a-descriptions-item label="统计">
+        <a-tag color="green">{{ albumInfo.total_views }}</a-tag>
+        <span>次浏览，</span>
+        <a-tag color="red">{{ albumInfo.likes }}</a-tag>
+        <span>人喜欢，</span>
+        <a-tag color="orange">{{ albumInfo.comment_total }}</a-tag>
+        <span>条评论</span>
+      </a-descriptions-item>
+    </a-descriptions>
   </a-skeleton>
 </template>
 
@@ -8,6 +29,7 @@
   import { onMounted, ref } from 'vue';
   import { message } from 'ant-design-vue';
   import { apiGet } from '@/api';
+  import { AlbumInfo } from '@/models/album';
 
   const { albumID } = defineProps(
     {
@@ -16,7 +38,7 @@
   );
 
   const loading = ref(true);
-  const albumInfo = ref({});
+  const albumInfo = ref<AlbumInfo | null>(null);
 
   const getAlbumInfo = async () => {
     try {
@@ -34,4 +56,13 @@
 </script>
 
 <style scoped>
+  .info-card {
+    max-width: 500px;
+  }
+
+  .tag-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
 </style>
