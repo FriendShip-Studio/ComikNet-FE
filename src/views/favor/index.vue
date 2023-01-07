@@ -3,13 +3,15 @@
     <div class="content">
       <div class="content-title">收藏夹</div>
       <div id="fav-list">
-        <a-popover placement="right" :mouseEnterDelay="0.5" :destroyTooltipOnHide="true"
-                   v-for="(item, index) in favList" :key="item.id">
+        <a-popover
+          placement="right"
+          :mouseEnterDelay="0.5"
+          v-for="(item, index) in favList" :key="item.id">
           <template #content>
             <AlbumInfo :albumID="item.id"/>
           </template>
           <template #title>
-            <span class="info-title">{{ item.name }}</span>
+            <div class="info-title">{{ item.name }}</div>
           </template>
           <div class="fav-item">
             <img :src="parseCover(item.id)" class="cover"/>
@@ -87,10 +89,12 @@
     box-shadow: 0 0 10px 0 purple;
   }
 
-  .info-title{
+  .info-title {
     font-size: 1.2em;
     font-weight: bold;
+    max-width: 400px;
   }
+
   /*.fav-item::after {*/
   /*  position: absolute;*/
   /*  content: "";*/
@@ -133,15 +137,20 @@
       grid-template-columns: repeat(2, 1fr);
     }
   }
-  
+
   @media (max-width: 512px) {
     .cover {
       height: 100%;
       width: 100%;
       object-fit: cover;
     }
-    .main{
+
+    .main {
       min-width: 350px;
+    }
+
+    .info-title {
+      width: 85vw;
     }
   }
 </style>
