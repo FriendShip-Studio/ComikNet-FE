@@ -9,6 +9,6 @@ import Header from "@/components/Header.vue";
 </script>
 <style>
 #wrapper{
-  background-color: aqua;
+  background-color: whitesmoke;
 }
 </style>

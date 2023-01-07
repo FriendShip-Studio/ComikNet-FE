@@ -2,8 +2,10 @@
   <div id="userFav">
     <h2>收藏夹</h2>
     <div id="favList">
-      <div v-for="item in favList" :key="item.id" class="favItem">
+      <div v-for="(item, index) in favList" :key="item.id" class="favItem"
+        @click="showComicCard(index)" @mouseleave="destoryCard()">
         <img :src="getComicCover(item.id)" style="height: 20em" />
+        <microCard :id="item.id" v-if="selectedIndex === index" />
       </div>
     </div>
   </div>
@@ -14,9 +16,19 @@ import axios from "@/api";
 import { FavList } from "@/models/user";
 import { message } from "ant-design-vue";
 import { useRouter } from "vue-router";
+import microCard from '@/views/components/comicCard.vue';
 
 const router = useRouter();
 const favList = ref<FavList>();
+const selectedIndex = ref<string>();
+
+const showComicCard = (index: any) => {
+  selectedIndex.value = index;
+}
+
+const destoryCard = () => {
+  selectedIndex.value = "";
+}
 
 const getFavourite = async () => {
   try {
@@ -54,6 +66,7 @@ onMounted(() => {
   justify-items: center;
   row-gap: 24px;
 }
+
 .favItem {
   transition: transform 0.2s cubic-bezier(0.06, 0.45, 0.35, 0.85);
   transform-origin: top;
@@ -62,10 +75,12 @@ onMounted(() => {
   display: grid;
   place-items: center;
 }
+
 .favItem:hover {
   transform: perspective(280px) rotateX(1deg);
   box-shadow: 0 0 10px 0 purple;
 }
+
 .favItem::after {
   position: absolute;
   content: "";
@@ -73,15 +88,14 @@ onMounted(() => {
   width: 210px;
   transition: transform 0.2s cubic-bezier(0.06, 0.45, 0.35, 0.85);
   transform-origin: top;
-  background: linear-gradient(
-    to bottom left,
-    transparent,
-    rgba(255, 255, 255, 0.4) 25%,
-    transparent 30%,
-    transparent 100%
-  );
+  background: linear-gradient(to bottom left,
+      transparent,
+      rgba(255, 255, 255, 0.4) 25%,
+      transparent 30%,
+      transparent 100%);
   z-index: 2;
 }
+
 .favItem:hover::after {
   /* background: linear-gradient(to bottom left , transparent, transparent 30%,rgba(255,255,255,0.6) 31%, rgba(255,255,255,0.6) 39%, transparent 40%, transparent 100% ); */
   transform: perspective(280px) rotateX(1deg);
