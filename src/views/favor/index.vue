@@ -10,6 +10,7 @@
     </div>
   </div>
 </template>
+
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
 import axios from "@/api";
@@ -25,6 +26,8 @@ const selectedIndex = ref<string>();
 const showComicCard = (index: any) => {
   selectedIndex.value = index;
 }
+
+
 
 const destoryCard = () => {
   selectedIndex.value = "";

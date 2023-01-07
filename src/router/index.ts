@@ -26,6 +26,11 @@ const routes = [
         name: "Favor",
         component: () => import("@/views/favor/index.vue"),
       },
+      {
+        path: "album/:id",
+        name: "Album",
+        component: () => import("@/views/album/index.vue"),
+      }
     ],
   },
 ];

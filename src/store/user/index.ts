@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { UserState } from "./types";
+import { UserState } from "./type";
 import { message } from "ant-design-vue";
 import axios from "@/api";
 import type { LoginForm } from "@/models/form";
