@@ -1,7 +1,7 @@
 <template>
     <div id="comicCard">
         <a-skeleton :loading="loading" active>
-            <p>{{ comicInfo }}</p>
+            <p>{{ albumInfo }}</p>
         </a-skeleton>
     </div>
 </template>
@@ -13,7 +13,7 @@ import { message } from "ant-design-vue";
 
 const props = defineProps<{ id: string }>();
 
-const comicInfo = ref({});
+const albumInfo = ref({});
 
 const loading = ref(true);
 

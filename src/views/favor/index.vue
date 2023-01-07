@@ -1,106 +1,132 @@
 <template>
-  <div id="userFav">
-    <h2>收藏夹</h2>
-    <div id="favList">
-      <div v-for="(item, index) in favList" :key="item.id" class="favItem"
-        @click="showComicCard(index)" @mouseleave="destoryCard()">
-        <img :src="getComicCover(item.id)" style="height: 20em" />
-        <microCard :id="item.id" v-if="selectedIndex === index" />
+  <main class="main" :style="{width: $route.meta.expand ? '100%' : '1200px'}">
+    <div class="content">
+      <div class="content-title">收藏夹</div>
+      <div id="fav-list">
+        <a-popover placement="right" :mouseEnterDelay="0.5" :destroyTooltipOnHide="true"
+                   v-for="(item, index) in favList" :key="item.id">
+          <template #content>
+            <AlbumInfo :albumID="item.id"/>
+          </template>
+          <template #title>
+            <span>{{ item.name }}</span>
+          </template>
+          <div class="fav-item">
+            <img :src="parseCover(item.id)" class="cover"/>
+          </div>
+        </a-popover>
       </div>
     </div>
-  </div>
+  </main>
+
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
-import axios from "@/api";
-import { FavList } from "@/models/user";
-import { message } from "ant-design-vue";
-import { useRouter } from "vue-router";
-import microCard from '@/views/components/comicCard.vue';
+  import { onMounted, ref } from 'vue';
+  import { apiGet } from '@/api';
+  import { FavList } from '@/models/user';
+  import { message } from 'ant-design-vue';
+  import { useRouter } from 'vue-router';
+  import AlbumInfo from '@/components/AlbumInfo.vue';
 
-const router = useRouter();
-const favList = ref<FavList>();
-const selectedIndex = ref<string>();
+  const router = useRouter();
+  const favList = ref<FavList>();
 
-const showComicCard = (index: any) => {
-  selectedIndex.value = index;
-}
-
-
-
-const destoryCard = () => {
-  selectedIndex.value = "";
-}
-
-const getFavourite = async () => {
-  try {
-    const resp = await axios.get("http://localhost:8000/favorite");
-    if (resp.data.errorMsg) {
-      if ((resp.data.errorMsg = "請先登入會員")) {
-        message.error("需要登录");
+  const getFavourite = async () => {
+    try {
+      const resp = await apiGet('http://localhost:8000/favorite');
+      if (resp.errorMsg) {
+        message.error(resp.errorMsg);
+        router.push('/login');
+        return;
       }
-      router.push("/login");
-      return;
+
+      favList.value = resp.data.list;
+      console.log(favList.value);
+    } catch (error: any) {
+      message.error(error.message);
+      console.log(error);
     }
-    favList.value = resp.data.data.list;
-    console.log(favList.value);
-  } catch (error: any) {
-    message.error(error.message);
-    console.log(error);
-    router.push("/login");
-  }
-};
+  };
 
-const getComicCover = (id: string) => {
-  return `https://cdn-msp.jmapiproxy2.cc/media/albums/` + id + `_3x4.jpg`;
-};
+  const parseCover = (id: string) => {
+    return `https://cdn-msp.jmapiproxy2.cc/media/albums/` + id + `_3x4.jpg`;
+  };
 
-onMounted(() => {
-  getFavourite();
-});
+  onMounted(() => {
+    getFavourite();
+  });
 </script>
 
 <style scoped>
-#favList {
-  padding: 24px;
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  justify-items: center;
-  row-gap: 24px;
-}
+  #fav-list {
+    padding: 24px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    justify-items: center;
+    gap: 24px;
+  }
 
-.favItem {
-  transition: transform 0.2s cubic-bezier(0.06, 0.45, 0.35, 0.85);
-  transform-origin: top;
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-  z-index: 1;
-  display: grid;
-  place-items: center;
-}
+  .fav-item {
+    transition: transform 0.2s cubic-bezier(0.06, 0.45, 0.35, 0.85);
+    transform-origin: top;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    display: grid;
+    place-items: center;
+  }
 
-.favItem:hover {
-  transform: perspective(280px) rotateX(1deg);
-  box-shadow: 0 0 10px 0 purple;
-}
+  .cover {
+    height: 280px;
+    width: 210px;
+    object-fit: cover;
+  }
 
-.favItem::after {
-  position: absolute;
-  content: "";
-  height: 280px;
-  width: 210px;
-  transition: transform 0.2s cubic-bezier(0.06, 0.45, 0.35, 0.85);
-  transform-origin: top;
-  background: linear-gradient(to bottom left,
-      transparent,
-      rgba(255, 255, 255, 0.4) 25%,
-      transparent 30%,
-      transparent 100%);
-  z-index: 2;
-}
+  .fav-item:hover {
+    transform: perspective(280px) rotateX(1deg);
+    box-shadow: 0 0 10px 0 purple;
+  }
 
-.favItem:hover::after {
-  /* background: linear-gradient(to bottom left , transparent, transparent 30%,rgba(255,255,255,0.6) 31%, rgba(255,255,255,0.6) 39%, transparent 40%, transparent 100% ); */
-  transform: perspective(280px) rotateX(1deg);
-}
+  /*.fav-item::after {*/
+  /*  position: absolute;*/
+  /*  content: "";*/
+  /*  height: 280px;*/
+  /*  width: 210px;*/
+  /*  transition: transform 0.2s cubic-bezier(0.06, 0.45, 0.35, 0.85);*/
+  /*  transform-origin: top;*/
+  /*  background: linear-gradient(to bottom left,*/
+  /*  transparent,*/
+  /*  rgba(255, 255, 255, 0.4) 25%,*/
+  /*  transparent 30%,*/
+  /*  transparent 100%);*/
+  /*  z-index: 2;*/
+  /*}*/
+
+  /*.fav-item:hover::after {*/
+  /*  !* background: linear-gradient(to bottom left , transparent, transparent 30%,rgba(255,255,255,0.6) 31%, rgba(255,255,255,0.6) 39%, transparent 40%, transparent 100% ); *!*/
+  /*  transform: perspective(280px) rotateX(1deg);*/
+  /*}*/
+  @media (max-width: 1500px) {
+    #fav-list {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+
+  @media (max-width: 1250px) {
+    #fav-list {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  @media (max-width: 1000px) {
+    #fav-list {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 750px) {
+    #fav-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
 </style>

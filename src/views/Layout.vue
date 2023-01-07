@@ -23,7 +23,10 @@
           <template #overlay>
             <a-menu>
               <a-menu-item>
-                <router-link to="/user/info">个人资料</router-link>
+                <router-link to="/user">个人资料</router-link>
+              </a-menu-item>
+              <a-menu-item>
+                <router-link to="/favor">收藏夹</router-link>
               </a-menu-item>
               <a-menu-item>
                 <span @click="handleLogout">退出登录</span>
@@ -169,7 +172,7 @@
     }
 
     .main {
-      width: 100vw !important;
+      width: 100% !important;
     }
 
     .content {

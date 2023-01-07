@@ -26,12 +26,21 @@ const routes = [
         }
       },
       {
+        path: "user",
+        name: "User",
+        component: () => import("@/views/user/index.vue"),
+        meta:{
+          title: "个人资料",
+          expand: false,
+        }
+      },
+      {
         path: "favor",
         name: "Favor",
         component: () => import("@/views/favor/index.vue"),
         meta:{
           title: "收藏夹",
-          expand: false,
+          expand: true,
         }
       },
       {
