@@ -16,9 +16,21 @@
             <UserOutlined/>
           </template>
         </a-avatar>
-        <div id="bar-username" class="nav-link btn-link">
-          {{ userStore.nickname }}
-        </div>
+        <a-dropdown :trigger="['click']">
+          <div id="bar-username" class="nav-link btn-link" @click.prevent>
+            {{ userStore.username }}
+          </div>
+          <template #overlay>
+            <a-menu>
+              <a-menu-item>
+                <router-link to="/user/info">个人资料</router-link>
+              </a-menu-item>
+              <a-menu-item>
+                <span @click="handleLogout">退出登录</span>
+              </a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
       </div>
     </div>
   </header>
@@ -30,11 +42,36 @@
   import { UserOutlined } from '@ant-design/icons-vue';
   import { useRouter } from 'vue-router';
   import useUserStore from '@/store/user';
+  import { message } from 'ant-design-vue';
+  import { onMounted } from 'vue';
 
   const router = useRouter();
   const userStore = useUserStore();
-  const logout = () => {
+
+  onMounted(async () => {
+    console.log('mounted');
+    console.log("isLogin: ", userStore.isLogin());
+    if (!userStore.isLogin()) {
+      if (!localStorage.login_form) {
+        await router.push('/login');
+        return;
+      }
+      try {
+        const loginForm = JSON.parse(localStorage.login_form);
+        if (await userStore.login(loginForm)) {
+          message.success('自动登录成功');
+        } else {
+          await router.push('/login');
+        }
+      } catch (e) {
+        await router.push('/login');
+      }
+    }
+  });
+
+  const handleLogout = () => {
     userStore.logout();
+    message.info('已退出登录');
     router.push('/login');
   };
 </script>
@@ -61,7 +98,6 @@
   #main-title {
     font-size: 20px;
     font-weight: bold;
-    margin-right: 16px;
     cursor: pointer;
   }
 

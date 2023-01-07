@@ -40,15 +40,14 @@ const useUserStore = defineStore('user', {
         if (resp.errorMsg) {
           message.error(resp.errorMsg);
           return false;
-        } else {
-          message.success('登录成功');
-          this.setInfo(resp.data);
-          localStorage.setItem('remember', loginForm.remember.toString());
-          if (loginForm.remember) {
-            localStorage.setItem('login_form', JSON.stringify(loginForm));
-          }
-          return true;
         }
+        this.setInfo(resp.data);
+        this.setInfo({ isLogin: true });
+        if (loginForm.remember) {
+          localStorage.setItem('login_form', JSON.stringify(loginForm));
+        }
+        return true;
+
       } catch (err: any) {
         message.error(err.message);
         return false;
@@ -73,6 +72,13 @@ const useUserStore = defineStore('user', {
       } catch (err: any) {
         message.error(err.message);
       }
+    },
+    logout() {
+      this.resetInfo();
+      localStorage.removeItem('login_form');
+    },
+    isLogin() {
+      return this.uid !== undefined;
     }
   }
 });

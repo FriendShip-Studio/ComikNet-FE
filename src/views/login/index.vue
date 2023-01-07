@@ -45,11 +45,12 @@
 </template>
 <script lang="ts" setup>
   import type { LoginForm } from '@/models/form';
-  import { router } from '@/router';
   import { message } from 'ant-design-vue';
   import { reactive } from 'vue';
   import useUserStore from '@/store/user';
+  import { useRouter } from 'vue-router';
 
+  const router = useRouter();
   const userStore = useUserStore();
 
   const loginForm = reactive<LoginForm>({
@@ -61,6 +62,7 @@
   const handleLogin = async (loginForm: LoginForm) => {
     console.log(loginForm);
     if (await userStore.login(loginForm)) {
+      message.success('登录成功');
       await router.push('/');
     }
   };

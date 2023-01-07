@@ -23,10 +23,6 @@ axios.interceptors.response.use(
     return response.data;
   },
   (error: AxiosError) => {
-    message.error({
-      content: error.message || 'Request Error',
-      duration: 5 * 1000
-    });
     return Promise.reject(error);
   }
 );
