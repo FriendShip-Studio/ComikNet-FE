@@ -30,7 +30,7 @@
             <a-input-password v-model:value="loginForm.password"/>
           </a-form-item>
           <a-form-item name="remember" :wrapper-col="{ offset: 6, span: 18 }">
-            <a-checkbox v-model:checked="loginForm.isRemember">
+            <a-checkbox v-model:checked="loginForm.remember">
               保持登录
             </a-checkbox>
           </a-form-item>
@@ -55,15 +55,12 @@
   const loginForm = reactive<LoginForm>({
     username: '',
     password: '',
-    isRemember: false
+    remember: false
   });
 
   const handleLogin = async (loginForm: LoginForm) => {
+    console.log(loginForm);
     if (await userStore.login(loginForm)) {
-      localStorage.setItem('remember', loginForm.isRemember.toString());
-      if (loginForm.isRemember) {
-        localStorage.setItem('login_form', JSON.stringify(loginForm));
-      }
       await router.push('/');
     }
   };

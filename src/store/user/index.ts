@@ -34,15 +34,19 @@ const useUserStore = defineStore('user', {
     resetInfo() {
       this.$reset();
     },
-    async login(values: LoginForm) {
+    async login(loginForm: LoginForm) {
       try {
-        const resp = await apiPost<LoginRes>('http://localhost:8000/login', values);
-        if (resp.data.errorMsg) {
-          message.error(resp.data.errorMsg);
+        const resp = await apiPost<LoginRes>('http://localhost:8000/login', loginForm);
+        if (resp.errorMsg) {
+          message.error(resp.errorMsg);
           return false;
         } else {
           message.success('登录成功');
           this.setInfo(resp.data);
+          localStorage.setItem('remember', loginForm.remember.toString());
+          if (loginForm.remember) {
+            localStorage.setItem('login_form', JSON.stringify(loginForm));
+          }
           return true;
         }
       } catch (err: any) {
@@ -59,7 +63,7 @@ const useUserStore = defineStore('user', {
           captcha: values.captcha,
           sex: values.sex
         });
-        for (let msg of resp.data.data) {
+        for (let msg of resp.data) {
           if (msg['type'] == 'error') {
             message.error(msg['msg']);
           } else {
