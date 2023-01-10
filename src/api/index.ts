@@ -1,41 +1,49 @@
-import type { AxiosRequestConfig } from 'axios';
-import axios, { AxiosError, AxiosResponse } from 'axios';
-import { message } from 'ant-design-vue';
+import axios from "axios";
+import type { AxiosRequestConfig, AxiosResponse } from "axios";
+import { message } from "ant-design-vue";
+import type { MyRes } from "@/models";
 
+const api = axios.create({
+  baseURL: "http://localhost:8000/",
+  timeout: 30000,
+  withCredentials: true,
+  headers: {},
+});
 
-if (import.meta.env.VITE_API_BASE_URL) {
-  axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
-}
-axios.defaults.withCredentials = true;
-
-axios.interceptors.request.use(
+api.interceptors.request.use(
   (config: AxiosRequestConfig) => {
-    if (!config.headers) {
-      config.headers = {};
-    }
     return config;
   },
-  (error) => {
+  (error: any) => {
+    console.log(error);
     return Promise.reject(error);
   }
 );
-axios.interceptors.response.use(
+api.interceptors.response.use(
   (response: AxiosResponse) => {
     return response.data;
   },
-  (error: AxiosError) => {
-    return Promise.reject(error);
+  (error) => {
+    const tip = `${error.response.status} ${error.response.statusText}`;
+    message.error(tip);
+    return Promise.reject(tip);
   }
 );
 
-export const apiGet = (path: string, params?: object, config?: object) => {
-  return axios.get(path, { params, ...config });
+const apiPost = <T = any>(
+  url: string,
+  data?: any,
+  config?: any
+): Promise<MyRes<T>> => {
+  return api.post(url, data, { ...config });
 };
 
-export const apiPost = <T = unknown>(
-  path: string,
-  data?: object,
-  config?: object
-) => {
-  return axios.post<T>(path, data, config);
+const apiGet = <T = any>(
+  url: string,
+  params?: any,
+  config?: any
+): Promise<MyRes<T>> => {
+  return api.get(url, { params, ...config });
 };
+
+export { apiPost, apiGet };

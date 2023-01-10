@@ -1,32 +1,41 @@
-export interface LoginRes {
-  status_code: string;
-  data?: {
-    uid: string;
-    username: string;
-    email: string;
-    emailverified: string;
-    photo: string;
-    fname: string;
-    gender: string;
-    message: string;
-    coin: number;
-    album_favorites: number;
-    s: string;
-    favorite_list: Array<any>,
-    level_name: string;
-    level: number;
-    nextLevelExp: number,
-    exp: string;
-    expPercent: number,
-    badges: Array<any>,
-    album_favorites_max: number
-  };
-  errorMsg?: string;
-}
+import { apiGet, apiPost } from "@/api/index";
+import { MyRes } from "@/models";
+import type {
+  LoginForm,
+  LoginRes,
+  RegisterForm,
+  RegisterReq,
+  RegisterRes,
+} from "@/models/user";
+import { message } from "ant-design-vue";
 
-export interface RegisterRes {
-  data: Array<{
-    type: string;
-    msg: string;
-  }>;
-}
+const login = async (loginForm: LoginForm): Promise<MyRes<LoginRes>> => {
+  const res = await apiPost("/login", loginForm);
+  if (res.status_code !== 200) {
+    message.error(res.errorMsg);
+    return Promise.reject(res);
+  }
+  return res;
+};
+
+const register = async (registerReq: RegisterReq): Promise<boolean> => {
+  const res = await apiPost("/register", registerReq);
+  let flag = false;
+  for (let msg of res.data) {
+    if (msg["type"] == "error") {
+      message.error(msg["msg"]);
+    } else {
+      message.success(msg["msg"]);
+      flag = true;
+    }
+  }
+  if (!flag) {
+    return Promise.reject(false);
+  }
+  return flag;
+};
+
+export default {
+  login,
+  register,
+};
