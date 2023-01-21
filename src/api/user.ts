@@ -35,7 +35,26 @@ const register = async (registerReq: RegisterReq): Promise<boolean> => {
   return flag;
 };
 
+const logout = async () => {
+  const res = await apiGet("/logout");
+  if (res.status_code !== 200) {
+    message.error(res.errorMsg);
+    return Promise.reject(res);
+  }
+}
+
+const getHistory = async (page: number) => {
+  const res = await apiGet("/history", { page });
+  if (res.status_code !== 200) {
+    message.error(res.errorMsg);
+    return Promise.reject(res);
+  }
+  return res;
+}
+
 export default {
   login,
   register,
+  logout,
+  getHistory
 };

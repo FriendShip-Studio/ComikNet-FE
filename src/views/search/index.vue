@@ -1,0 +1,166 @@
+<template>
+    <main class="main" :style="{ width: $route.meta.expand ? '100%' : '1200px' }">
+        <div class="content" v-if="isSearched">
+            <div class="content-title">搜索结果</div>
+            <div id="search-list">
+                <a-popover placement="right" :mouseEnterDelay="0.5" v-for="item in resList" :key="item.id">
+                    <template #content>
+                        <AlbumInfo :albumID="item.id" />
+                    </template>
+                    <template #title>
+                        <div class="info-title">{{ item.name }}</div>
+                    </template>
+                    <div class="result-item">
+                        <img :src="parseCover(item.id)" class="cover" />
+                    </div>
+                </a-popover>
+            </div>
+            <div id="page-button"></div>
+        </div>
+        <!-- 此处为 如果是无效搜索或没给出搜索字段，则将结果区域替换为一个大型搜索框 -->
+        <div class="search-box" v-if="!isSearched">
+            <div class="content-title">搜索</div>
+            <!-- <a-input-search v-model:value="searchQuery" placeholder="开始搜索你喜欢的本子..." enter-button="出发!" size="large"
+                @search="" /> -->
+        </div>
+    </main>
+</template>
+
+<script lang="ts" setup>
+import { onMounted, ref } from "vue";
+import { ComicItem } from "@/models/favlist";
+import { useRouter } from "vue-router";
+import AlbumInfo from "@/components/AlbumInfo.vue";
+import search from "@/api/pack/search";
+
+
+const router = useRouter();
+const resList = ref<Array<ComicItem>>();
+const isSearched = ref(false);
+
+const getResult = async () => {
+    if (typeof router.currentRoute.value.query.query != "string") {
+        isSearched.value = false;
+        return;
+    }
+    let query = router.currentRoute.value.query.query as string;
+    let page = router.currentRoute.value.query.page as string;
+    let sortBy = router.currentRoute.value.query.sort as string;
+    if (!query) {
+        isSearched.value = false;
+        return;
+    }
+    if (!page || typeof router.currentRoute.value.query.page != "string") {
+        page = "0";
+    }
+    if (sortBy != "mr" && sortBy != "mv" && sortBy != "mp" && sortBy != "tf") {
+        sortBy = "mr";
+    }
+    isSearched.value = true;
+    let resp = await search.search(query, Number(page), sortBy);
+    resList.value = resp.data?.content;
+};
+
+const parseCover = (id: string) => {
+    return `https://cdn-msp.jmapiproxy2.cc/media/albums/` + id + `_3x4.jpg`;
+};
+
+onMounted(() => {
+    getResult();
+});
+</script>
+
+<style scoped>
+#search-list {
+    padding: 24px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    justify-items: center;
+    gap: 24px;
+}
+
+.result-item {
+    transition: transform 0.2s cubic-bezier(0.06, 0.45, 0.35, 0.85);
+    transform-origin: top;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    display: grid;
+    place-items: center;
+}
+
+.cover {
+    height: 280px;
+    width: 210px;
+    object-fit: cover;
+}
+
+.fav-item:hover {
+    transform: perspective(280px) rotateX(1deg);
+    box-shadow: 0 0 10px 0 purple;
+}
+
+.info-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    max-width: 400px;
+}
+
+/*.fav-item::after {*/
+/*  position: absolute;*/
+/*  content: "";*/
+/*  height: 280px;*/
+/*  width: 210px;*/
+/*  transition: transform 0.2s cubic-bezier(0.06, 0.45, 0.35, 0.85);*/
+/*  transform-origin: top;*/
+/*  background: linear-gradient(to bottom left,*/
+/*  transparent,*/
+/*  rgba(255, 255, 255, 0.4) 25%,*/
+/*  transparent 30%,*/
+/*  transparent 100%);*/
+/*  z-index: 2;*/
+/*}*/
+
+/*.fav-item:hover::after {*/
+/*  !* background: linear-gradient(to bottom left , transparent, transparent 30%,rgba(255,255,255,0.6) 31%, rgba(255,255,255,0.6) 39%, transparent 40%, transparent 100% ); *!*/
+/*  transform: perspective(280px) rotateX(1deg);*/
+/*}*/
+@media (max-width: 1500px) {
+    #fav-list {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+@media (max-width: 1250px) {
+    #fav-list {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 1000px) {
+    #fav-list {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 750px) {
+    #fav-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 512px) {
+    .cover {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+
+    .main {
+        min-width: 350px;
+    }
+
+    .info-title {
+        width: 85vw;
+    }
+}
+</style>

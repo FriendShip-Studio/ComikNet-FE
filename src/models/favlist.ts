@@ -1,8 +1,8 @@
 export interface FavList {
-  list: Array<FavItem>;
+  list: Array<ComicItem>;
 }
 
-export interface FavItem {
+export interface ComicItem {
   id: string;
   author?: string;
   description?: string;

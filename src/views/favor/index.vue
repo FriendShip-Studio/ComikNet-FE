@@ -3,12 +3,7 @@
     <div class="content">
       <div class="content-title">收藏夹</div>
       <div id="fav-list">
-        <a-popover
-          placement="right"
-          :mouseEnterDelay="0.5"
-          v-for="(item, index) in favList"
-          :key="item.id"
-        >
+        <a-popover placement="right" :mouseEnterDelay="0.5" v-for="(item, index) in favList" :key="item.id">
           <template #content>
             <AlbumInfo :albumID="item.id" />
           </template>
@@ -26,13 +21,13 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
-import { FavItem } from "@/models/favlist";
+import { ComicItem } from "@/models/favlist";
 import { useRouter } from "vue-router";
 import AlbumInfo from "@/components/AlbumInfo.vue";
 import favlist from "@/api/favlist";
 
 const router = useRouter();
-const favList = ref<Array<FavItem>>();
+const favList = ref<Array<ComicItem>>();
 
 const getFavourite = async () => {
   try {

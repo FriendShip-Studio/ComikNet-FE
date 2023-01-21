@@ -1,7 +1,7 @@
 import axios from "axios";
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import { message } from "ant-design-vue";
-import type { MyRes } from "@/models";
+import type { MyRes, PicRes } from "@/models";
 
 const api = axios.create({
   baseURL: "http://localhost:8000/",
@@ -46,4 +46,12 @@ const apiGet = <T = any>(
   return api.get(url, { params, ...config });
 };
 
-export { apiPost, apiGet };
+const picGet = <T = any>(
+  url: string,
+  params?: any,
+  config?: any
+): Promise<PicRes<T>> => {
+  return api.get(url, { params, ...config });
+};
+
+export { apiPost, apiGet, picGet };
