@@ -23,7 +23,7 @@ const routes = [
         meta: {
           title: "首页",
           expand: false,
-        }
+        },
       },
       {
         path: "search",
@@ -31,8 +31,8 @@ const routes = [
         component: () => import("@/views/search/index.vue"),
         meta: {
           title: "搜索",
-          expand: true
-        }
+          expand: true,
+        },
       },
       {
         path: "user",
@@ -41,7 +41,7 @@ const routes = [
         meta: {
           title: "个人资料",
           expand: false,
-        }
+        },
       },
       {
         path: "favor",
@@ -50,7 +50,7 @@ const routes = [
         meta: {
           title: "收藏夹",
           expand: true,
-        }
+        },
       },
       {
         path: "history",
@@ -58,8 +58,8 @@ const routes = [
         component: () => import("@/views/history/index.vue"),
         meta: {
           title: "历史记录",
-          expand: true
-        }
+          expand: true,
+        },
       },
       {
         path: "album/:id",
@@ -68,7 +68,7 @@ const routes = [
         meta: {
           title: "画廊",
           expand: false,
-        }
+        },
       },
       {
         path: "comic/:id",
@@ -76,9 +76,14 @@ const routes = [
         component: () => import("@/views/reader/index.vue"),
         meta: {
           title: "漫画阅读",
-          expand: false
-        }
-      }
+          expand: false,
+        },
+      },
+      {
+        path: "0721",
+        name: "0721",
+        component: () => import("@/components/JMImage/example.vue"),
+      },
     ],
   },
 ];
