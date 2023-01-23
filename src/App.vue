@@ -1,7 +1,10 @@
+<script setup lang="ts">
+</script>
+
 <template>
   <RouterView />
 </template>
-<script setup lang="ts"></script>
+
 <style>
 * {
   box-sizing: border-box;
@@ -32,7 +35,7 @@ body {
   left: -10px;
   right: -10px;
   bottom: -10px;
-  background-image: url("https://cdn.friendship.org.cn/LightPicture/2023/01/6cc02e13d5250bdf.jpg");
+  background-image: url("https://cdn.friendship.org.cn/LightPicture/2022/12/9ea252d45fd6c0ba.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   filter: blur(6px);
