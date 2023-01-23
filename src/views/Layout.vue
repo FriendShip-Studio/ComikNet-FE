@@ -75,7 +75,7 @@ import { UserOutlined } from "@ant-design/icons-vue";
 import { useRouter } from "vue-router";
 import useUserStore from "@/store/user";
 import useMirrorStore from "@/store/mirror";
-import { message } from "ant-design-vue";
+import { message, notification } from "ant-design-vue";
 import { onMounted, ref } from "vue";
 import useToggle from "@/utils/useToggle";
 import sleep from "@/utils/useSleep";
@@ -112,6 +112,13 @@ onMounted(async () => {
 
   if (!mirrorStore.isConfigured()) {
     setModalVis(true);
+  }
+  else{
+    notification["info"]({
+        message: '镜像源提示',
+        description:
+          `当前选择的api源为${mirrorStore.api_url}，图像源为${mirrorStore.img_url}，如需切换请点击右上角头像`
+      });
   }
 });
 const handelSetMirror = async () => {

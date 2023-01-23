@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import pinia from "@/store/index";
 import { MirrorState } from "@/models/mirror";
 
-export const PERSIST_KEY = "mirror_store_persist_喵";
+export const PERSIST_KEY = "mirror_store_persist";
 
 const useMirrorStore = defineStore({
   id: "mirror",
@@ -14,7 +14,7 @@ const useMirrorStore = defineStore({
     };
   },
   getters: {
-    userInfo(state: MirrorState): MirrorState {
+    mirrorInfo(state: MirrorState): MirrorState {
       return { ...state };
     },
   },
@@ -29,12 +29,14 @@ const useMirrorStore = defineStore({
 });
 
 const watchDog = useMirrorStore(pinia);
-watchDog.$subscribe((mutation, state) => {
+
+watchDog.$subscribe((_, state) => {
   localStorage.setItem(PERSIST_KEY, JSON.stringify(state));
 });
-if (localStorage.PERSIST_KEY !== undefined) {
+
+if (localStorage.getItem(PERSIST_KEY) !== null) {
   try {
-    watchDog.$state = JSON.parse(localStorage.PERSIST_KEY);
+    watchDog.$state = JSON.parse(localStorage.getItem(PERSIST_KEY) as string);
   } catch (e) {
     console.error(e);
     localStorage.removeItem(PERSIST_KEY);
