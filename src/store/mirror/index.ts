@@ -10,7 +10,7 @@ const useMirrorStore = defineStore({
     return {
       configured: false,
       api_url: undefined,
-      img_url: undefined,
+      pic_url: undefined,
     };
   },
   getters: {
@@ -25,6 +25,11 @@ const useMirrorStore = defineStore({
     reset() {
       this.$reset();
     },
+    set(api_url: string, pic_url: string) {
+      this.configured = true;
+      this.api_url = api_url;
+      this.pic_url = pic_url;
+    }
   },
 });
 

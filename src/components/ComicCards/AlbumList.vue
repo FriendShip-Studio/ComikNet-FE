@@ -1,6 +1,6 @@
 <template>
     <div id="album-list">
-        <a-popover placement="right" :mouseEnterDelay="0.75" v-for="item in albumList" :key="item.id">
+        <a-popover placement="right" :mouseEnterDelay="0.5" v-for="item in albumList" :key="item.id">
             <template #content>
                 <AlbumCard :id="item.id" />
             </template>
@@ -8,35 +8,27 @@
                 <div class="comic-title">{{ item.name }}</div>
             </template>
             <div class="comic-item">
-                <a-image :src="parseCoverURL(item.id)" fallback="" class="comic-cover" />
+                <img :src="parseCoverURL(item.id)" @click="$router.push(`/album/${item.id}`)" class="comic-cover" />
             </div>
         </a-popover>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
-import mirror from "@/apis/utils/mirror";
+import useMirrorStore from "@/store/mirror";
 import AlbumCard from "@/components/ComicCards/AlbumCard.vue";
 import type { AlbumInfo } from "@/models/albums";
 
-const picMirrorURL = ref("");
+const mirrorStore = useMirrorStore();
 
 const { albumList } = defineProps({
     albumList: Array<AlbumInfo>
 });
 
-const savePicMirrorURL = async () => {
-    picMirrorURL.value= await mirror.getPicMirror();
-}
-
 const parseCoverURL = (id: string) => {
-    return `${picMirrorURL}/media/albums/${id}_3x4.jpg`
+    return `https://${mirrorStore.pic_url}/media/albums/${id}_3x4.jpg`
 }
 
-onMounted(() => {
-    savePicMirrorURL();
-});
 
 </script>
 
@@ -73,7 +65,7 @@ onMounted(() => {
         width: 100%;
         object-fit: cover;
     }
-    
+
     .comic-title {
         width: 85vw;
     }

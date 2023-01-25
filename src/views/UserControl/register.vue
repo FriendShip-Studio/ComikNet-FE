@@ -7,7 +7,7 @@
                     <span class="gray">丨</span>
                     <span class="title">注册</span>
                 </div>
-                <a-form :model="registerForm" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }"
+                <a-form :model="registerForm" name="register" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }"
                     autocomplete="off" @finish="handleRegister">
                     <a-form-item label="邮箱" name="email" :rules="[{ required: true, message: '邮箱不能为空!' }]">
                         <a-input v-model:value="registerForm.email" />

@@ -1,9 +1,6 @@
 <template>
   <header id="header">
-    <div
-      id="header-content"
-      :style="{ width: $route.meta.expand ? '100%' : '1200px' }"
-    >
+    <div id="header-content" :style="{ width: $route.meta.expand ? '100%' : '1200px' }">
       <div id="main-title">
         <router-link to="/" class="nav-link">ComikNet</router-link>
       </div>
@@ -11,19 +8,11 @@
         {{ $route.meta.title }}
       </div>
       <div id="search-box">
-        <a-input-search
-          v-model:value="searchQuery"
-          placeholder="搜索..."
-          enter-button
-          @search="onSearch"
-        />
+        <a-input-search v-model:value="searchQuery" placeholder="搜索..." enter-button @search="onSearch" />
       </div>
 
       <div id="user-bar">
-        <a-avatar
-          src="https://cdn.friendship.org.cn/LightPicture/2023/01/98675cef4ed63f9a.png"
-          size="large"
-        >
+        <a-avatar src="https://cdn.friendship.org.cn/LightPicture/2023/01/98675cef4ed63f9a.png" size="large">
           <template #icon>
             <UserOutlined />
           </template>
@@ -44,6 +33,9 @@
                 <router-link to="/history">观看历史</router-link>
               </a-menu-item>
               <a-menu-item>
+                <span @click="resetMirror">重新选择镜像</span>
+              </a-menu-item>
+              <a-menu-item>
                 <span @click="handleLogout">退出登录</span>
               </a-menu-item>
             </a-menu>
@@ -54,80 +46,68 @@
   </header>
   <router-view />
   <footer id="footer">ComikNet © Friendship org 2023</footer>
-  <a-modal
-    v-model:visible="isModalVis"
-    :confirm-loading="isPending"
-    :closable="false"
-    :maskClosable="false"
-    title="选择镜像源"
-  >
-    <div id="mirror-modal-content"></div>
-    <template #footer>
-      <a-button @click="handelSetMirror" :loading="isPending" type="primary"
-        >确定</a-button
-      >
-    </template>
-  </a-modal>
+
 </template>
 
 <script lang="ts" setup>
 import { UserOutlined } from "@ant-design/icons-vue";
 import { useRouter } from "vue-router";
 import useUserStore from "@/store/user";
-import useMirrorStore from "@/store/mirror";
-import { message, notification } from "ant-design-vue";
+import { message } from "ant-design-vue";
 import { onMounted, ref } from "vue";
-import useToggle from "@/utils/useToggle";
-import sleep from "@/utils/useSleep";
+import useMirrorStore from "@/store/mirror";
 
 const router = useRouter();
-const userStore = useUserStore();
 const mirrorStore = useMirrorStore();
+const userStore = useUserStore();
 const searchQuery = ref("");
-const { val: isModalVis, set: setModalVis } = useToggle(false);
-const { val: isPending, set: setPending } = useToggle(false);
+
+const resetMirror = async () => {
+  mirrorStore.reset();
+  message.info("已重置镜像");
+  console.log("reset");
+}
+
 onMounted(async () => {
-  console.log("isLogin: ", userStore.isLogined());
   if (!userStore.isLogined()) {
     if (!sessionStorage.login_form && !localStorage.login_form) {
       await router.push("/login");
       return;
     }
-    try {
-      const loginForm = JSON.parse(localStorage.login_form);
-      if (await userStore.login(loginForm)) {
-        message.success("自动登录成功");
-      } else {
+
+    if (sessionStorage.login_form) {
+      try {
         const loginForm = JSON.parse(sessionStorage.login_form);
         if (await userStore.login(loginForm)) {
+          console.log("Login from sessionStorage success");
+        } else {
+          await router.push("/login");
+        }
+      } catch (err: any) {
+        await router.push("/login");
+      } finally {
+        return;
+      }
+    }
+
+    if (localStorage.login_form) {
+      console.log("Login from localStorage");
+      try {
+        const loginForm = JSON.parse(localStorage.login_form);
+        if (await userStore.login(loginForm)) {
+          console.log("Login from localStorage success");
           message.success("自动登录成功");
         } else {
           await router.push("/login");
         }
+      } catch (err: any) {
+        await router.push("/login");
       }
-    } catch (err: any) {
-      await router.push("/login");
     }
-  }
 
-  if (!mirrorStore.isConfigured()) {
-    setModalVis(true);
-  }
-  else{
-    notification["info"]({
-        message: '镜像源提示',
-        description:
-          `当前选择的api源为${mirrorStore.api_url}，图像源为${mirrorStore.img_url}，如需切换请点击右上角头像`
-      });
   }
 });
-const handelSetMirror = async () => {
-  setPending(true);
-  //setMirror
-  await sleep(1000);
-  setPending(false);
-  setModalVis(false);
-};
+
 const handleLogout = () => {
   userStore.logout();
   message.info("已退出登录");
@@ -135,7 +115,6 @@ const handleLogout = () => {
 };
 
 const onSearch = async () => {
-  router.replace("/refresh");
   router.push({ path: "/search", query: { query: searchQuery.value } });
 };
 </script>

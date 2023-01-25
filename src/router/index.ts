@@ -10,10 +10,6 @@ const routes = [
         name: "Register",
         component: () => import("@/views/UserControl/Register.vue")
     }, {
-        path: "/refresh",
-        name: "Refresh",
-        component: () => import("@/views/Refresh.vue")
-    }, {
         path: "/",
         name: "Layout",
         component: () => import("@/views/Layout.vue"),
@@ -60,7 +56,7 @@ const routes = [
                 component: () => import("@/views/Comic/album.vue"),
                 meta: {
                     title: "漫画详情",
-                    expand: false
+                    expand: true
                 }
             },
             {

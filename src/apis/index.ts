@@ -1,7 +1,7 @@
 import axios from "axios";
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import { message } from "ant-design-vue";
-import { ApiRequest, MirrorRequest } from "@/models/requests";
+import { ApiRequest, ImageListRequest, MirrorRequest } from "@/models/requests";
 
 
 const requests = axios.create({
@@ -54,4 +54,10 @@ const mirror = (
     return requests.get("/mirror", { params });
 }
 
-export { get, post, mirror };
+const img_list = (
+    params: string
+): Promise<ImageListRequest> => {
+    return requests.get("/img_list", { params });
+}
+
+export { get, post, mirror, img_list };

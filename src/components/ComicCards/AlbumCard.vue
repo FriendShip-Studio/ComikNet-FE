@@ -2,11 +2,13 @@
     <a-skeleton :loading="loading" active>
         <a-descriptions v-if="albumInfo" :column="1" class="comic-card">
             <a-descriptions-item label="禁漫号">
-                {{ albumInfo.id }}
+                JM{{ albumInfo.id }}
             </a-descriptions-item>
             <a-descriptions-item label="作者">
                 <span class="gray-tip" v-if="albumInfo.author.length === 0">没有作者信息~</span>
-                <span v-else>{{ albumInfo.author.join("，") }}</span>
+                <span v-else><a-tag v-for="author in albumInfo.author" :key="author" color="#39c5bb">{{
+                    author
+                }}</a-tag></span>
             </a-descriptions-item>
             <a-descriptions-item label="标签">
                 <div class="tag-wrapper">
@@ -16,7 +18,7 @@
                 </div>
             </a-descriptions-item>
             <a-descriptions-item label="简介">
-                <span class="gray-tip" v-if="albumInfo.description.length === 0">
+                <span class="gray-tip" v-if="!albumInfo.description || albumInfo.description.length === 0">
                     作品没有简介~
                 </span>
                 <span v-else>{{ albumInfo.description }}</span>
