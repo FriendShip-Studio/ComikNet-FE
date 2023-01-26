@@ -5,28 +5,26 @@
         JM{{ albumInfo.id }}
       </a-descriptions-item>
       <a-descriptions-item label="作者">
-        <span class="gray-tip" v-if="albumInfo.author.length === 0"
-          >没有作者信息~</span
-        >
-        <span v-else
-          ><a-tag
+        <span v-if="albumInfo.author.length === 0">没有作者信息~</span>
+        <span v-else>
+          <a-tag
             v-for="author in albumInfo.author"
             :key="author"
             color="#39c5bb"
-            >{{ author }}</a-tag
-          ></span
-        >
+          >
+            {{ author }}
+          </a-tag>
+        </span>
       </a-descriptions-item>
       <a-descriptions-item label="标签">
         <div class="tag-wrapper">
-          <a-tag v-for="tag in albumInfo.tags" :key="tag" color="blue">{{
-            tag
-          }}</a-tag>
+          <a-tag v-for="tag in albumInfo.tags" :key="tag" color="blue">
+            {{ tag }}
+          </a-tag>
         </div>
       </a-descriptions-item>
       <a-descriptions-item label="简介">
         <span
-          class="gray-tip"
           v-if="!albumInfo.description || albumInfo.description.length === 0"
         >
           作品没有简介~
@@ -74,7 +72,7 @@ onMounted(() => {
 </script>
 
 <style lang="css" scoped>
-.info-card {
+.comic-card {
   max-width: 400px;
 }
 

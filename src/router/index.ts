@@ -49,7 +49,7 @@ const routes = [
         component: () => import("@/views/UserControl/favor.vue"),
         meta: {
           title: "我的收藏",
-          expand: false,
+          expand: true,
         },
       },
       {
