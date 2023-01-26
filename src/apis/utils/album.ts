@@ -13,7 +13,7 @@ const getAlbumInfo = async (id: string): Promise<AlbumInfo> => {
   const res = await get<AlbumInfo>(`/album`, { id });
   if (res.errorMsg || !res.data) {
     message.error(res.errorMsg);
-    return Promise.reject(res);
+    return Promise.reject({ res: res, errTip: "获取漫画信息失败" });
   }
   return res.data;
 };
@@ -22,7 +22,7 @@ const getChapterInfo = async (id: string): Promise<Array<ChapterInfo>> => {
   const res = await get<ChapterResponse>(`/chapter`, { id });
   if (res.errorMsg || !res.data) {
     message.error(res.errorMsg);
-    return Promise.reject(res);
+    return Promise.reject({ res: res, errTip: "获取章节信息失败" });
   }
 
   const chapterInfo: Array<ChapterInfo> = [];
@@ -48,7 +48,7 @@ const getChapterImgList = async (cid: string): Promise<ChapterImageData> => {
   const res = await get<ImageListRequest>("/img_list", { id: cid });
   if (res.errorMsg || !res.data) {
     message.error(res.errorMsg);
-    return Promise.reject(res);
+    return Promise.reject({ res: res, errTip: "获取章节图片失败" });
   }
   // !!!类型层级不对
   return {
@@ -61,7 +61,7 @@ const getAlbumComents = async (id: string, page = 1): Promise<CommentsList> => {
   const res = await get<CommentsList>("/comment/comic", { id, page });
   if (res.errorMsg || !res.data) {
     message.error(res.errorMsg);
-    return Promise.reject(res);
+    return Promise.reject({ res: res, errTip: "获取漫画评论失败" });
   }
   return {
     total: res.data.total,
