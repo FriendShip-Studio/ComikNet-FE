@@ -13,7 +13,12 @@
           <img :src="parseCoverURL(albumInfo?.id)" alt="cover" />
         </div>
         <div class="album-info">
-          <a-descriptions v-if="albumLoaded" :column="1" :contentStyle="caonima_zi_zheme_xiao" :labelStyle="caonima_zi_zheme_xiao">
+          <a-descriptions
+            v-if="albumLoaded"
+            :column="1"
+            :contentStyle="caonima_zi_zheme_xiao"
+            :labelStyle="caonima_zi_zheme_xiao"
+          >
             <a-descriptions-item label="禁漫号">
               JM{{ albumInfo.id }}
             </a-descriptions-item>
