@@ -1,13 +1,19 @@
 <template>
   <main class="main" :style="{ width: $route.meta.expand ? '100%' : '1200px' }">
     <div class="content">
-      <div class="content-title">{{ albumInfo?.name }}</div>
-      <div class="content-album">
+      <div class="content-title">{{ albumInfo?.name || "漫画详情" }}</div>
+      <a-spin
+        tip="再等会，要出来了"
+        :spinning="!albumLoaded"
+        class="absoulte-spin"
+      >
+      </a-spin>
+      <div class="content-album" v-if="albumLoaded && albumInfo">
         <div class="album-cover">
           <img :src="parseCoverURL(albumInfo?.id)" alt="cover" />
         </div>
         <div class="album-info">
-          <a-descriptions v-if="albumInfo" :column="1">
+          <a-descriptions v-if="albumLoaded" :column="1" :contentStyle="caonima_zi_zheme_xiao" :labelStyle="caonima_zi_zheme_xiao">
             <a-descriptions-item label="禁漫号">
               JM{{ albumInfo.id }}
             </a-descriptions-item>
@@ -51,21 +57,34 @@
               <a-tag color="orange">{{ albumInfo.comment_total }}</a-tag>
               <span>条评论</span>
             </a-descriptions-item>
+            <a-descriptions-item label="章节列表">
+              <a-spin
+                :spinning="!chapterLoaded && albumLoaded"
+                tip="加载章节列表中"
+                class="relative-spin"
+              >
+              </a-spin>
+              <div class="content-chapters" v-if="chapterLoaded">
+                <a-button
+                  v-for="chapter in chapterList"
+                  :key="chapter.id"
+                  @click="router.push(`/comic/${chapter.cid}`)"
+                >
+                  {{ chapter.id }}
+                </a-button>
+              </div>
+            </a-descriptions-item>
           </a-descriptions>
         </div>
       </div>
-      <div class="chapters">
-        <a-button
-          v-for="chapter in chapterList"
-          :key="chapter.id"
-          @click="router.push(`/comic/${chapter.cid}`)"
-          >{{ chapter.id }}</a-button
-        >
+      <div id="related-list" v-if="albumLoaded">
+        <Albums :album-list="albumInfo?.related_list" />
       </div>
-      <div id="related-list" label="相关推荐: ">
-        <Albums :album-list="albumInfo?.related_list" id="fav-list" />
-      </div>
-      <div class="comments">
+      <a-spin
+        :spinning="!chapterLoaded && albumLoaded"
+        tip="加载评论中"
+      ></a-spin>
+      <div class="comments" v-if="commentsLoaded">
         <a-list
           class="comment-list"
           :header="`共 ${commentsList?.total} 条评论`"
@@ -98,7 +117,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import useMirrorStore from "@/store/mirror";
 import Albums from "@/components/ComicCards/AlbumList.vue";
@@ -106,15 +125,23 @@ import album from "@/apis/utils/album";
 import { message } from "ant-design-vue";
 import type { AlbumInfo, ChapterInfo } from "@/models/albums";
 import type { CommentsList } from "@/models/comments";
+import useToggle from "@/utils/useToggle";
 
 const router = useRouter();
 const mirrorStore = useMirrorStore();
-
 const albumID = ref(router.currentRoute.value.params.id);
+
+const { val: albumLoaded, set: setAlbumLoaded } = useToggle(false);
+const { val: chapterLoaded, set: setChapterLoaded } = useToggle(false);
+const { val: commentsLoaded, set: setCommentsLoaded } = useToggle(false);
 
 const albumInfo = ref<AlbumInfo>();
 const chapterList = ref<Array<ChapterInfo>>();
-const commentsList = ref<CommentsList | null>(null);
+const commentsList = ref<CommentsList>();
+
+const caonima_zi_zheme_xiao = {
+  "font-size": "20px",
+};
 
 const parseCoverURL = (id: string | undefined) => {
   return `https://${mirrorStore.pic_url}/media/albums/${id}.jpg`;
@@ -124,94 +151,57 @@ const parseAvatarURL = (uid: string) => {
   return `https://${mirrorStore.pic_url}/media/users/${uid}.jpg`;
 };
 
-const getAlbumInfo = async () => {
-  if (!albumID.value || typeof albumID.value !== "string") {
-    router.push("/404");
-    return;
-  }
-  try {
-    const res = await album.getAlbumInfo(albumID.value);
-    if (res === null) {
-      message.error("未能成功获取漫画信息!");
-      router.push("/404");
-      return;
-    } else {
-      albumInfo.value = res;
-    }
-    // eslint-disable-next-line
-  } catch (error: any) {
-    message.error("未能成功获取漫画信息!");
-    router.push("/404");
-    return;
-  }
+const resetLoaded = () => {
+  setAlbumLoaded(false);
+  setChapterLoaded(false);
+  setCommentsLoaded(false);
+  albumInfo.value = undefined;
+  chapterList.value = undefined;
+  commentsList.value = undefined;
 };
 
-const getChapterInfo = async () => {
-  if (!albumID.value || typeof albumID.value !== "string") {
-    router.push("/404");
-    return;
-  }
+const update = async (albumID: string) => {
   try {
-    const res = await album.getChapterInfo(albumID.value);
-    chapterList.value = res;
+    albumInfo.value = await album.getAlbumInfo(albumID);
+    setAlbumLoaded(true);
+    chapterList.value = await album.getChapterInfo(albumID);
+    setChapterLoaded(true);
+    // commentsList.value = await album.getAlbumComents(albumID);
+    // setCommentsLoaded(true);
     // eslint-disable-next-line
   } catch (error: any) {
+    // 建议弹出一个对话框提示错误并且询问是否前往源站还是重新加载
     console.log(error);
-    message.error("未能成功获取章节信息!");
-    //后续在此添加引导到原站链接
-    return;
-  }
-};
-
-const getAlbumComments = async () => {
-  if (!albumID.value || typeof albumID.value !== "string") {
-    router.push("/404");
-    return;
-  }
-  try {
-    const res = await album.getAlbumComents(albumID.value);
-    console.log(res);
-    if (res === null) {
-      message.error("未能成功获取评论信息!");
-      return;
-    } else {
-      commentsList.value = res;
-    }
-    // eslint-disable-next-line
-  } catch (error: any) {
-    message.error("未能成功获取评论信息!");
-    return;
+    message.error(error.errTip);
   }
 };
 
 watch(
   () => router.currentRoute.value.params.id,
   (newID) => {
+    if (!newID || typeof newID !== "string") {
+      router.push("/404");
+      return;
+    }
     albumID.value = newID;
-    getAlbumInfo();
-    getChapterInfo();
-    getAlbumComments();
+    resetLoaded();
+    update(newID);
+  },
+  {
+    immediate: true,
   }
 );
-
-onMounted(() => {
-  getAlbumInfo();
-  getChapterInfo();
-  getAlbumComments();
-});
 </script>
 
 <style>
-#related-list {
-  padding: 24px;
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  justify-items: center;
-  gap: 24px;
-}
 .content-album {
   padding: 24px;
   display: flex;
   column-gap: 24px;
+}
+.content-chapters {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 </style>
