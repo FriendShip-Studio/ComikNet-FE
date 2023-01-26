@@ -2,7 +2,7 @@
   <main class="main" :style="{ width: $route.meta.expand ? '100%' : '1200px' }">
     <div class="content">
       <div class="content-title">收藏夹</div>
-      <a-spin tip="再等会，要出来了" :spinning="!loaded" class="content-spin">
+      <a-spin tip="再等会，要出来了" :spinning="!loaded" class="absoulte-spin">
       </a-spin>
       <Albums :album-list="favList" id="fav-list" />
     </div>

@@ -90,7 +90,7 @@ const rules = {
     :keyboard="false"
     title="选择 ComikNet 镜像源"
   >
-    <div class="mirror-settings-notice">
+    <div id="mirror-settings-notice">
       <p>
         请先获取一次镜像服务器状态，再根据镜像选项后的延迟选择最优的服务器线路。
       </p>
@@ -188,7 +188,7 @@ body {
   z-index: -1;
 }
 
-.mirror-settings-notice {
+#mirror-settings-notice {
   font-size: 13px;
 }
 

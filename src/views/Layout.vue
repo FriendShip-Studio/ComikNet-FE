@@ -210,11 +210,17 @@ const onSearch = async () => {
   border-bottom: 1px solid #e0e0e0;
 }
 
-.content-spin {
+.absoulte-spin {
   position: absolute !important;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.relative-spin {
+  position: relative !important;
+  left: 50%;
+  transform: translate(-50%, 0);
 }
 
 #route-title {

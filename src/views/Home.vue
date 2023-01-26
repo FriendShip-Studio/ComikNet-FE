@@ -5,7 +5,7 @@
       <a-spin
         tip="再等会，要出来了"
         :spinning="!loaded"
-        class="content-spin"
+        class="absoulte-spin"
       ></a-spin>
       <div id="lightbox"></div>
     </div>
