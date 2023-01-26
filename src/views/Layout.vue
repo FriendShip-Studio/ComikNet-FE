@@ -199,16 +199,22 @@ const onSearch = async () => {
   border-radius: 8px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
 }
 
 .content-title {
-  align-self: stretch;
   font-weight: bold;
   font-size: 16px;
   text-align: center;
   padding: 16px;
   border-bottom: 1px solid #e0e0e0;
+}
+
+.content-spin {
+  position: absolute !important;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 #route-title {
