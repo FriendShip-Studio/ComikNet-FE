@@ -9,20 +9,12 @@ const setMirror = async (api?: string, pic?: string) => {
 }
 
 const getApiSpeed = async () => {
-    const resp = await get("/speed/api");
-    if (resp.status_code !== 200) {
-        message.error("镜像测速失败!");
-        return Promise.reject(resp);
-    }
+    const resp = await get("/speed/api",{},{timeout: 60000});
     return resp.data;
 }
 
 const getPicSpeed = async () => {
-    const resp = await get("/speed/pic");
-    if (resp.status_code !== 200) {
-        message.error("镜像测速失败!");
-        return Promise.reject(resp);
-    }
+    const resp = await get("/speed/pic",{},{timeout: 60000});
     return resp.data;
 }
 

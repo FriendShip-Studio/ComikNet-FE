@@ -11,8 +11,9 @@ import { ref, watch } from "vue";
 import md5 from "md5";
 
 const canvas = ref<HTMLCanvasElement | null>();
-const { imageSrc } = defineProps<{
+const { imageSrc, scramble_id } = defineProps<{
   imageSrc: string | null;
+  scramble_id: string | undefined;
 }>();
 
 const { val: isLoading, set: setLoading } = useToggle(true);
@@ -26,9 +27,9 @@ const parseURL = () => {
   };
 };
 
-const getTileCount = (albumID: number, imageIndex: string) => {
+const getTileCount = (albumID: number, imageIndex: string, scramble_id: string = "220980") => {
   let tileCount = 10;
-  if (albumID < 220980) {
+  if (albumID < Number(scramble_id)) {
     tileCount = 1;
   }
   if (albumID >= 268850) {
@@ -102,7 +103,7 @@ watch(
       //     (canvas.value.style.width = nw / 2 + "px"),
       //   (canvas.value.style.padding = "10px");
 
-      const tileCount = getTileCount(albumID, imageIndex);
+      const tileCount = getTileCount(albumID, imageIndex, scramble_id);
       const offset = Math.floor(nh % tileCount);
       const span = Math.floor(nh / tileCount);
       console.log(`tileCount: ${tileCount}, offset: ${offset}, span: ${span}`);
@@ -140,6 +141,7 @@ export default {
 .jm-image-wrapper {
   font-size: 0;
 }
+
 .jm-image {
   width: 512px;
 }

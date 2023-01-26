@@ -26,7 +26,7 @@ requests.interceptors.response.use(
         return response.data;
     },
     (error: any) => {
-        const warn = `${error.response.status} ${error.response.statusText}`;
+        const warn = `${error.message}`;
         message.error(warn);
         return Promise.reject(warn);
     }
@@ -55,7 +55,7 @@ const mirror = (
 }
 
 const img_list = (
-    params: string
+    params: any
 ): Promise<ImageListRequest> => {
     return requests.get("/img_list", { params });
 }

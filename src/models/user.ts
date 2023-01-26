@@ -16,7 +16,11 @@ export interface LoginRes {
     nextLevelExp: number;
     exp: string;
     expPercent: number;
-    badges: Array<any>;
+    badges: Array<{
+        content: string;
+        name: string;
+        id: string;
+    }>;
     album_favorites_max: number;
 }
 

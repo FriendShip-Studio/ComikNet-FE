@@ -55,7 +55,6 @@ const handelSetMirror = async () => {
   setPending(true);
   mirror.setMirror(mirrorSettings.api_url, mirrorSettings.pic_url);
   mirrorStore.set(mirrorSettings.api_url as string, mirrorSettings.pic_url as string);
-  await sleep(1000);
   setPending(false);
   setModalVis(false);
   showMirror.value = false;

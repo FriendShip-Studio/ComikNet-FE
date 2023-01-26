@@ -1,6 +1,7 @@
 import { get, img_list } from "@/apis/index";
 import { message } from "ant-design-vue";
-import type { AlbumInfo, ChapterImageData, ChapterInfo } from "@/models/albums"
+import type { AlbumInfo, ChapterImageData, ChapterInfo } from "@/models/albums";
+import type { CommentsList } from "@/models/comments";
 
 const getAlbumInfo = async (id: string): Promise<AlbumInfo | null> => {
     try {
@@ -51,7 +52,7 @@ const getChapterInfo = async (id: string): Promise<Array<ChapterInfo> | null> =>
 
 const getChapterImgList = async (cid: string): Promise<ChapterImageData | null> => {
     try {
-        const res = await img_list(cid);
+        const res = await img_list({ id: cid });
         if (res.errorMsg || !res.data || !res.scramble_id) {
             message.error(res.errorMsg);
             return null;
@@ -68,8 +69,27 @@ const getChapterImgList = async (cid: string): Promise<ChapterImageData | null> 
     }
 }
 
+const getAlbumComents = async (id: string, page: number = 1): Promise<CommentsList | null> => {
+    try {
+        const res = await get("/comment/comic", { id, page });
+        if (res.errorMsg) {
+            message.error(res.errorMsg);
+            return null;
+        }
+        return {
+            total: res.data.total,
+            list: res.data.list
+        }
+    } catch (error: any) {
+        message.error(error.message);
+        return null;
+    }
+
+}
+
 export default {
     getAlbumInfo,
+    getAlbumComents,
     getChapterInfo,
     getChapterImgList
 }

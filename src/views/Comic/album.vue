@@ -46,38 +46,65 @@
             <div id="related-list" label="相关推荐: ">
                 <Albums :album-list="albumInfo?.related_list" id="fav-list" />
             </div>
+            <div class="comments">
+                <a-list class="comment-list" :header="`共 ${commentsList?.total} 条评论`" item-layout="horizontal"
+                    :data-source="commentsList?.list">
+                    <template #renderItem="{ item }">
+                        <a-list-item>
+                            <a-comment :author="item.username" :avatar="parseAvatarURL(item.UID)">
+                                <template #content>
+                                    <p>
+                                        {{ item.content }}
+                                    </p>
+                                </template>
+                                <template #datetime>
+                                    <a-tooltip :title="item.addtime.format('YYYY-MM-DD')">
+                                        <span>{{ item.datetime.fromNow() }}</span>
+                                    </a-tooltip>
+                                </template>
+                            </a-comment>
+                        </a-list-item>
+                    </template>
+                </a-list>
+            </div>
         </div>
     </main>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import useMirrorStore from "@/store/mirror";
 import Albums from "@/components/ComicCards/AlbumList.vue";
 import album from "@/apis/utils/album";
 import { message } from "ant-design-vue";
-import { AlbumInfo, ChapterInfo } from "@/models/albums";
+import type { AlbumInfo, ChapterInfo } from "@/models/albums";
+import type { CommentsList } from "@/models/comments";
 
 const router = useRouter();
 const mirrorStore = useMirrorStore();
 
-const albumID = router.currentRoute.value.params.id;
+const albumID = ref(router.currentRoute.value.params.id);
 
 const albumInfo = ref<AlbumInfo>();
 const chapterList = ref<Array<ChapterInfo>>();
+const commentsList = ref<CommentsList | null>(null);
 
 const parseCoverURL = (id: string | undefined) => {
-    return `https://${mirrorStore.pic_url}/media/albums/${id}_3x4.jpg`
+    return `https://${mirrorStore.pic_url}/media/albums/${id}.jpg`
+}
+
+const parseAvatarURL = (uid: string) => {
+    return `https://${mirrorStore.pic_url}/media/users/${uid}.jpg`
 }
 
 const getAlbumInfo = async () => {
-    if (!albumID || typeof albumID !== "string") {
+    if (!albumID.value || typeof albumID.value !== "string") {
         router.push("/404");
         return;
     }
     try {
-        const res = await album.getAlbumInfo(albumID);
+        const res = await album.getAlbumInfo(albumID.value);
         if (res === null) {
             message.error("未能成功获取漫画信息!");
             router.push("/404");
@@ -93,31 +120,62 @@ const getAlbumInfo = async () => {
 }
 
 const getChapterInfo = async () => {
-    if (!albumID || typeof albumID !== "string") {
+    if (!albumID.value || typeof albumID.value !== "string") {
         router.push("/404");
         return;
     }
     try {
-        const res = await album.getChapterInfo(albumID);
+        const res = await album.getChapterInfo(albumID.value);
         if (res === null) {
             message.error("未能成功获取章节信息!");
-            router.push("/404");
+            //后续在此添加引导到原站链接
             return;
         } else {
             chapterList.value = res;
         }
     } catch (error: any) {
         message.error("未能成功获取章节信息!");
+        //后续在此添加引导到原站链接
+        return;
+    }
+}
+
+const getAlbumComments = async () => {
+    if (!albumID.value || typeof albumID.value !== "string") {
         router.push("/404");
         return;
     }
-
+    try {
+        const res = await album.getAlbumComents(albumID.value);
+        console.log(res);
+        if (res === null) {
+            message.error("未能成功获取评论信息!");
+            return;
+        } else {
+            commentsList.value = res;
+        }
+    } catch (error: any) {
+        message.error("未能成功获取评论信息!");
+        return;
+    }
 }
+
+watch(
+    () => router.currentRoute.value.params.id,
+    (newID) => {
+        albumID.value = newID;
+        getAlbumInfo();
+        getChapterInfo();
+        getAlbumComments();
+    }
+)
 
 onMounted(() => {
     getAlbumInfo();
     getChapterInfo();
+    getAlbumComments();
 })
+
 </script>
 
 <style scoped>
