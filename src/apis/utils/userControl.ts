@@ -2,10 +2,11 @@ import { get, post } from "@/apis/index";
 import { LoginForm, LoginRes, RegisterReq, RegisterTip } from "@/models/user";
 import { ApiRequest } from "@/models/requests";
 import { message } from "ant-design-vue";
+import { AlbumInfo } from "@/models/albums";
 
 const login = async (loginForm: LoginForm): Promise<ApiRequest<LoginRes>> => {
   const res = await post<LoginRes>("/login", loginForm);
-  if (res.status_code !== 200) {
+  if (!res.data) {
     message.error(res.errorMsg);
     return Promise.reject(res);
   }
@@ -41,13 +42,13 @@ const logout = async () => {
   }
 };
 
-const getFavor = async (page = 1) => {
-  const res = await get("/favorite", { page });
-  if (res.status_code !== 200) {
+const getFavor = async (page = 1): Promise<{ list: Array<AlbumInfo> }> => {
+  const res = await get<{ list: Array<AlbumInfo> }>("/favorite", { page });
+  if (res.status_code !== 200 || !res.data) {
     message.error(res.errorMsg);
     return Promise.reject(res);
   }
-  return res;
+  return res.data;
 };
 
 export default {
