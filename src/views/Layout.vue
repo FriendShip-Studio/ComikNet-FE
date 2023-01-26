@@ -1,6 +1,9 @@
 <template>
   <header id="header">
-    <div id="header-content" :style="{ width: $route.meta.expand ? '100%' : '1200px' }">
+    <div
+      id="header-content"
+      :style="{ width: $route.meta.expand ? '100%' : '1200px' }"
+    >
       <div id="main-title">
         <router-link to="/" class="nav-link">ComikNet</router-link>
       </div>
@@ -8,11 +11,19 @@
         {{ $route.meta.title }}
       </div>
       <div id="search-box">
-        <a-input-search v-model:value="searchQuery" placeholder="搜索..." enter-button @search="onSearch" />
+        <a-input-search
+          v-model:value="searchQuery"
+          placeholder="搜索..."
+          enter-button
+          @search="onSearch"
+        />
       </div>
 
       <div id="user-bar">
-        <a-avatar src="https://cdn.friendship.org.cn/LightPicture/2023/01/98675cef4ed63f9a.png" size="large">
+        <a-avatar
+          src="https://cdn.friendship.org.cn/LightPicture/2023/01/98675cef4ed63f9a.png"
+          size="large"
+        >
           <template #icon>
             <UserOutlined />
           </template>
@@ -46,7 +57,6 @@
   </header>
   <router-view />
   <footer id="footer">ComikNet © Friendship org 2023</footer>
-
 </template>
 
 <script lang="ts" setup>
@@ -66,7 +76,7 @@ const resetMirror = async () => {
   mirrorStore.reset();
   message.info("已重置镜像");
   console.log("reset");
-}
+};
 
 onMounted(async () => {
   if (!userStore.isLogined()) {
@@ -83,10 +93,9 @@ onMounted(async () => {
         } else {
           await router.push("/login");
         }
+        // eslint-disable-next-line
       } catch (err: any) {
         await router.push("/login");
-      } finally {
-        return;
       }
     }
 
@@ -100,11 +109,11 @@ onMounted(async () => {
         } else {
           await router.push("/login");
         }
+        // eslint-disable-next-line
       } catch (err: any) {
         await router.push("/login");
       }
     }
-
   }
 });
 

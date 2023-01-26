@@ -4,25 +4,30 @@ import { notification } from "ant-design-vue";
 import { reactive, ref, watch } from "vue";
 import useToggle from "@/utils/useToggle";
 import mirror from "@/apis/utils/mirror";
-import type { MirrorState } from "@/models/mirror";
+import type {
+  ApiMirrorStatus,
+  MirrorState,
+  PicMirrorStatus,
+} from "@/models/mirror";
 
 const mirrorStore = useMirrorStore();
 const { val: isModalVis, set: setModalVis } = useToggle(false);
 const { val: isPending, set: setPending } = useToggle(false);
+const { val: isLoading, set: setLoading } = useToggle(false);
+const { val: isLoaded, set: setLoaded } = useToggle(false);
+
 const mirrorSettings = reactive<MirrorState>({
   api_url: "",
   pic_url: "",
   configured: false,
 });
-const apiList = ref<Array<any>>([]);
-const picList = ref<Array<any>>([]);
-const mirrorLoading = ref(false);
-const showMirror = ref(false);
+const apiList = ref<Array<ApiMirrorStatus>>([]);
+const picList = ref<Array<PicMirrorStatus>>([]);
 const loadingMsg = ref("正在准备镜像源连接...");
 
 const getMirrorStatus = async () => {
-  showMirror.value = false;
-  mirrorLoading.value = true;
+  setLoading(true);
+  setLoaded(false);
   apiList.value = [];
   picList.value = [];
   loadingMsg.value = "正在获取接口通讯镜像源状态...";
@@ -30,8 +35,8 @@ const getMirrorStatus = async () => {
   loadingMsg.value = "正在获取漫画图像镜像源状态...";
   picList.value = await mirror.getPicSpeed();
   loadingMsg.value = "正在准备镜像源连接...";
-  mirrorLoading.value = false;
-  showMirror.value = true;
+  setLoading(false);
+  setLoaded(true);
 };
 
 watch(
@@ -58,9 +63,14 @@ const handelSetMirror = async () => {
   );
   setPending(false);
   setModalVis(false);
-  showMirror.value = false;
+  setLoaded(false);
   apiList.value = [];
   picList.value = [];
+};
+
+const rules = {
+  api_url: [{ required: true, message: "必须选择一个镜像源!" }],
+  pic_url: [{ required: true, message: "必须选择一个镜像源!" }],
 };
 </script>
 
@@ -82,58 +92,56 @@ const handelSetMirror = async () => {
       <p>你随时可以在右上角的个人菜单中重新设置镜像源。</p>
     </div>
 
-    <a-spin :spinning="mirrorLoading">
+    <a-spin :spinning="isLoading">
       <template #tip>
         {{ loadingMsg }}
       </template>
       <div id="mirror-modal-content">
-        <a-button block type="primary" @click="getMirrorStatus"
-          >获取镜像状态</a-button
-        >
+        <a-button block type="primary" @click="getMirrorStatus">
+          获取镜像状态
+        </a-button>
         <a-form
+          id="mirror-setting-form"
           :model="mirrorSettings"
           name="mirror"
           :label-col="{ span: 6 }"
           :wrapper-col="{ span: 18 }"
           autocomplete="off"
           @finish="handelSetMirror"
-          v-if="showMirror"
+          v-if="isLoaded"
+          :rules="rules"
         >
-          <a-form-item
-            label="接口通讯镜像: "
-            name="api_url"
-            :rules="[{ required: true, message: '必须选择一个镜像源!' }]"
-          >
+          <a-form-item label="接口通讯镜像" name="api_url">
             <a-radio-group
               v-model:value="mirrorSettings.api_url"
               button-style="solid"
             >
               <a-radio-button
                 v-for="apiMirror in apiList"
+                :key="apiMirror.url"
                 :value="apiMirror.url"
-                >{{ apiMirror.url }} {{ apiMirror.time }}ms</a-radio-button
               >
+                {{ apiMirror.url }} {{ apiMirror.time }}ms
+              </a-radio-button>
             </a-radio-group>
           </a-form-item>
-          <a-form-item
-            label="漫画图片镜像: "
-            name="pic_url"
-            :rules="[{ required: true, message: '必须选择一个镜像源!' }]"
-          >
+          <a-form-item label="漫画图片镜像" name="pic_url">
             <a-radio-group
               v-model:value="mirrorSettings.pic_url"
               button-style="solid"
             >
               <a-radio-button
                 v-for="picMirror in picList"
+                :key="picMirror.url"
                 :value="picMirror.url"
-                >{{ picMirror.url }} {{ picMirror.time }}ms</a-radio-button
               >
+                {{ picMirror.url }} {{ picMirror.time }}ms
+              </a-radio-button>
             </a-radio-group>
           </a-form-item>
-          <a-button html-type="submit" :loading="isPending" type="primary"
-            >确定</a-button
-          >
+          <a-button html-type="submit" :loading="isPending" type="primary">
+            确定
+          </a-button>
         </a-form>
       </div>
     </a-spin>
@@ -175,5 +183,9 @@ body {
 
 .mirror-settings-notice {
   font-size: 13px;
+}
+
+#mirror-setting-form {
+  padding-top: 24px;
 }
 </style>

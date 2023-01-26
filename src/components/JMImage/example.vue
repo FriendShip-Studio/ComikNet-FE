@@ -21,7 +21,9 @@ import { onMounted, ref } from "vue";
 import JMImage from "@/components/JMImage/index.vue";
 
 const { val: loaded, set: setLoaded } = useToggle(false);
-const imageList = ref<Array<{ manifest: string; imageSrc: string }> | null>(null);
+const imageList = ref<Array<{ manifest: string; imageSrc: string }> | null>(
+  null
+);
 
 onMounted(async () => {
   console.log("onMounted");

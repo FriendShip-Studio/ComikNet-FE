@@ -1,7 +1,7 @@
 import axios from "axios";
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import { message } from "ant-design-vue";
-import { ApiRequest, ImageListRequest, MirrorRequest } from "@/models/requests";
+import { ApiRequest } from "@/models/requests";
 
 const requests = axios.create({
   baseURL: "http://localhost:8000",
@@ -14,6 +14,7 @@ requests.interceptors.request.use(
   (config: AxiosRequestConfig) => {
     return config;
   },
+  // eslint-disable-next-line
   (error: any) => {
     console.log(error);
     return Promise.reject(error);
@@ -24,6 +25,7 @@ requests.interceptors.response.use(
   (response: AxiosResponse) => {
     return response.data;
   },
+  // eslint-disable-next-line
   (err: any) => {
     console.log(err);
     let warn;
@@ -37,22 +39,20 @@ requests.interceptors.response.use(
   }
 );
 
-const get = (url: string, params?: any, config?: any): Promise<ApiRequest> => {
+const get = <T = unknown>(
+  url: string,
+  params?: object,
+  config?: object
+): Promise<ApiRequest<T>> => {
   return requests.get(url, { params, ...config });
 };
 
-const post = (url: string, data?: any, config?: any): Promise<ApiRequest> => {
+const post = <T = unknown>(
+  url: string,
+  data?: object,
+  config?: object
+): Promise<ApiRequest<T>> => {
   return requests.post(url, data, { ...config });
 };
 
-const mirror = (params?: any): Promise<MirrorRequest> => {
-  return requests.get("/mirror", { params });
-};
-
-const img_list = (
-    params: any
-): Promise<ImageListRequest> => {
-    return requests.get("/img_list", { params });
-}
-
-export { get, post, mirror, img_list };
+export { get, post };

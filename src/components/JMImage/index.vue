@@ -11,14 +11,14 @@ import { ref, watch } from "vue";
 import md5 from "md5";
 
 const canvas = ref<HTMLCanvasElement | null>();
-const { imageSrc, scramble_id } = defineProps<{
+const props = defineProps<{
   imageSrc: string | null;
   scramble_id: string | undefined;
 }>();
 
 const { val: isLoading, set: setLoading } = useToggle(true);
-const parseURL = () => {
-  const url = new URL(imageSrc as string);
+const parseURL = (imageSrc: string) => {
+  const url = new URL(imageSrc);
   const path = url.pathname;
   const pathArr = path.split("/");
   return {
@@ -27,9 +27,13 @@ const parseURL = () => {
   };
 };
 
-const getTileCount = (albumID: number, imageIndex: string, scramble_id: string = "220980") => {
+const getTileCount = (
+  albumID: number,
+  imageIndex: string,
+  scramble_id = "220980"
+) => {
   let tileCount = 10;
-  if (albumID < Number(scramble_id)) {
+  if (albumID < parseInt(scramble_id)) {
     tileCount = 1;
   }
   if (albumID >= 268850) {
@@ -76,13 +80,13 @@ const getTileCount = (albumID: number, imageIndex: string, scramble_id: string =
   return tileCount;
 };
 watch(
-  () => imageSrc,
+  () => props,
   () => {
-    if (imageSrc === null) return;
-    console.log("imageSrc changed to ", imageSrc);
-    const { albumID, imageIndex } = parseURL();
+    if (props.imageSrc === null) return;
+    console.log("imageSrc changed to ", props.imageSrc);
+    const { albumID, imageIndex } = parseURL(props.imageSrc);
     const image = new Image();
-    image.src = imageSrc;
+    image.src = props.imageSrc;
     image.onload = () => {
       if (!canvas.value) throw new Error("canvas is null");
       const ctx = canvas.value.getContext("2d");
@@ -103,7 +107,7 @@ watch(
       //     (canvas.value.style.width = nw / 2 + "px"),
       //   (canvas.value.style.padding = "10px");
 
-      const tileCount = getTileCount(albumID, imageIndex, scramble_id);
+      const tileCount = getTileCount(albumID, imageIndex, props.scramble_id);
       const offset = Math.floor(nh % tileCount);
       const span = Math.floor(nh / tileCount);
       console.log(`tileCount: ${tileCount}, offset: ${offset}, span: ${span}`);

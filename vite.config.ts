@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite'
-import { resolve } from 'path'
-import vue from '@vitejs/plugin-vue'
+import { defineConfig } from "vite";
+import { resolve } from "path";
+import vue from "@vitejs/plugin-vue";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -11,7 +11,11 @@ export default defineConfig({
         find: "@",
         replacement: resolve(__dirname, "src"),
       },
+      {
+        find: "vue",
+        replacement: "vue/dist/vue.esm-bundler.js", // compile template
+      },
     ],
     extensions: [".ts", ".js"],
   },
-})
+});
