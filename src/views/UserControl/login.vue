@@ -5,9 +5,9 @@
         <div id="card-title">
           <span class="title">登录</span>
           <span class="gray">丨</span>
-          <span class="title gray" @click="$router.push('/register')"
-            >注册</span
-          >
+          <span class="title gray" @click="$router.push('/register')">
+            注册
+          </span>
         </div>
         <a-form
           :model="loginForm"
@@ -38,7 +38,9 @@
           </a-form-item>
           <div id="btn-wrapper">
             <a-button type="link">忘记密码</a-button>
-            <a-button type="primary" html-type="submit">登录</a-button>
+            <a-button type="primary" html-type="submit" :loading="isPending">
+              登录
+            </a-button>
           </div>
         </a-form>
       </div>
@@ -51,9 +53,11 @@ import { message } from "ant-design-vue";
 import { reactive } from "vue";
 import useUserStore from "@/store/user";
 import { useRouter } from "vue-router";
+import useToggle from "@/utils/useToggle";
 
 const router = useRouter();
 const userStore = useUserStore();
+const { val: isPending, set: setPending } = useToggle(false);
 
 const loginForm = reactive<LoginForm>({
   username: "",
@@ -62,10 +66,12 @@ const loginForm = reactive<LoginForm>({
 });
 
 const handleLogin = async (loginForm: LoginForm) => {
+  setPending(true);
   if (await userStore.login(loginForm)) {
     message.success("登录成功");
     await router.push("/");
   }
+  setPending(false);
 };
 </script>
 
