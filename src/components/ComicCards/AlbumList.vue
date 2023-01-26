@@ -1,5 +1,5 @@
 <template>
-  <div id="album-list">
+  <div class="album-list">
     <a-popover
       placement="right"
       :mouseEnterDelay="0.5"
@@ -65,8 +65,42 @@ const parseCoverURL = (id: string) => {
   font-weight: bold;
   max-width: 400px;
 }
+.album-list {
+  padding: 24px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  justify-items: center;
+  gap: 24px;
+}
+
+@media (max-width: 1500px) {
+  .album-list {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (max-width: 1250px) {
+  .album-list {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 1000px) {
+  .album-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 750px) {
+  .album-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 
 @media (max-width: 512px) {
+  .main {
+    min-width: 350px;
+  }
   .comic-cover {
     height: 100%;
     width: 100%;

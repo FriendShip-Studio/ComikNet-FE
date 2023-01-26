@@ -39,42 +39,4 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
-#fav-list {
-  padding: 24px;
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  justify-items: center;
-  gap: 24px;
-}
-
-@media (max-width: 1500px) {
-  #fav-list {
-    grid-template-columns: repeat(5, 1fr);
-  }
-}
-
-@media (max-width: 1250px) {
-  #fav-list {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-@media (max-width: 1000px) {
-  #fav-list {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 750px) {
-  #fav-list {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 512px) {
-  .main {
-    min-width: 350px;
-  }
-}
-</style>
+<style scoped></style>
