@@ -30,13 +30,19 @@ const getMirrorStatus = async () => {
   setLoaded(false);
   apiList.value = [];
   picList.value = [];
-  loadingMsg.value = "正在获取接口通讯镜像源状态...";
-  apiList.value = await mirror.getApiSpeed();
-  loadingMsg.value = "正在获取漫画图像镜像源状态...";
-  picList.value = await mirror.getPicSpeed();
-  loadingMsg.value = "正在准备镜像源连接...";
-  setLoading(false);
-  setLoaded(true);
+  try {
+    loadingMsg.value = "正在获取接口通讯镜像源状态...";
+    apiList.value = await mirror.getApiSpeed();
+    loadingMsg.value = "正在获取漫画图像镜像源状态...";
+    picList.value = await mirror.getPicSpeed();
+    loadingMsg.value = "正在准备镜像源连接...";
+    //eslint-disable-next-line
+  } catch (error: any) {
+    console.log(error);
+  } finally {
+    setLoading(false);
+    setLoaded(true);
+  }
 };
 
 watch(
@@ -120,6 +126,7 @@ const rules = {
                 v-for="apiMirror in apiList"
                 :key="apiMirror.url"
                 :value="apiMirror.url"
+                block
               >
                 {{ apiMirror.url }} {{ apiMirror.time }}ms
               </a-radio-button>
