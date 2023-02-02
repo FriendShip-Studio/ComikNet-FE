@@ -13,7 +13,7 @@ import md5 from "md5";
 const canvas = ref<HTMLCanvasElement | null>();
 const props = defineProps<{
   imageSrc: string | null;
-  scramble_id: string | undefined;
+  scramble_id: number | undefined;
 }>();
 
 const { val: isLoading, set: setLoading } = useToggle(true);
@@ -30,10 +30,10 @@ const parseURL = (imageSrc: string) => {
 const getTileCount = (
   albumID: number,
   imageIndex: string,
-  scramble_id = "220980"
+  scramble_id = 220980
 ) => {
   let tileCount = 10;
-  if (albumID < parseInt(scramble_id)) {
+  if (albumID < scramble_id) {
     tileCount = 1;
   }
   if (albumID >= 268850) {
@@ -42,9 +42,6 @@ const getTileCount = (
     const lastChar = md5Code.slice(-1);
     const charCode = lastChar.charCodeAt(0);
     const switchCode = charCode % 10;
-    console.log(
-      `indexCode: ${indexCode}, md5Code: ${md5Code}, lastChar: ${lastChar}, charCode: ${charCode}, switchCode: ${switchCode}`
-    );
     switch (switchCode) {
       case 0:
         tileCount = 2;
@@ -83,7 +80,6 @@ watch(
   () => props,
   () => {
     if (props.imageSrc === null) return;
-    console.log("imageSrc changed to ", props.imageSrc);
     const { albumID, imageIndex } = parseURL(props.imageSrc);
     const image = new Image();
     image.src = props.imageSrc;
@@ -94,7 +90,6 @@ watch(
 
       const nw = image.naturalWidth;
       const nh = image.naturalHeight;
-      console.log(`image loaded：${nw}x${nh}`);
 
       canvas.value.width = nw;
       canvas.value.height = nh;
@@ -110,7 +105,6 @@ watch(
       const tileCount = getTileCount(albumID, imageIndex, props.scramble_id);
       const offset = Math.floor(nh % tileCount);
       const span = Math.floor(nh / tileCount);
-      console.log(`tileCount: ${tileCount}, offset: ${offset}, span: ${span}`);
 
       for (let i = 0; i < tileCount; i++) {
         const sy = nh - span * (i + 1) - offset;
@@ -147,6 +141,8 @@ export default {
 }
 
 .jm-image {
-  width: 512px;
+  box-shadow: 0 0 10px 0 gray;
+  width: 100%;
+  margin-top: 15px;
 }
 </style>

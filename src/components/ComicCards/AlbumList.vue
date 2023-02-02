@@ -1,11 +1,6 @@
 <template>
   <div class="album-list">
-    <a-popover
-      placement="right"
-      :mouseEnterDelay="0.5"
-      v-for="item in props.albumList"
-      :key="item.id"
-    >
+    <a-popover placement="right" :mouseEnterDelay="0.5" v-for="item in props.albumList" :key="item.id">
       <template #content>
         <AlbumCard :id="item.id" />
       </template>
@@ -13,11 +8,8 @@
         <div class="comic-title">{{ item.name }}</div>
       </template>
       <div class="comic-item">
-        <img
-          :src="parseCoverURL(item.id)"
-          @click="$router.push(`/album/${item.id}`)"
-          class="comic-cover"
-        />
+        <img :src="parseCoverURL(item.id)"
+          @click="$router.push(props.isDirect ? `/comic/${item.id}` : `/album/${item.id}`)" class="comic-cover" />
       </div>
     </a-popover>
   </div>
@@ -32,6 +24,7 @@ const mirrorStore = useMirrorStore();
 
 const props = defineProps({
   albumList: Array<AlbumInfo>,
+  isDirect: Boolean
 });
 
 const parseCoverURL = (id: string) => {
@@ -65,6 +58,7 @@ const parseCoverURL = (id: string) => {
   font-weight: bold;
   max-width: 400px;
 }
+
 .album-list {
   padding: 24px;
   display: grid;
@@ -101,6 +95,7 @@ const parseCoverURL = (id: string) => {
   .main {
     min-width: 350px;
   }
+
   .comic-cover {
     height: 100%;
     width: 100%;

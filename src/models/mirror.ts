@@ -13,3 +13,4 @@ export interface PicMirrorStatus {
   url: string;
   time: number;
 }
+

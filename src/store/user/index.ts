@@ -35,6 +35,8 @@ const useUserStore = defineStore("user", {
       try {
         const res = await userControl.login(loginForm);
         this.setInfo(res.data as LoginRes);
+        console.log(res.data);
+        console.log(this.userInfo)
         if (loginForm.remember) {
           localStorage.setItem("login_form", JSON.stringify(loginForm));
         }

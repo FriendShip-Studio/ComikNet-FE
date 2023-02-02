@@ -7,7 +7,6 @@ import type {
   ChapterResponse,
 } from "@/models/albums";
 import type { CommentsList } from "@/models/comments";
-import { ImageListRequest } from "@/models/requests";
 
 const getAlbumInfo = async (id: string): Promise<AlbumInfo> => {
   const res = await get<AlbumInfo>(`/album`, { id });
@@ -45,16 +44,13 @@ const getChapterInfo = async (id: string): Promise<Array<ChapterInfo>> => {
 };
 
 const getChapterImgList = async (cid: string): Promise<ChapterImageData> => {
-  const res = await get<ImageListRequest>("/img_list", { id: cid });
+  const res = await get<ChapterImageData>("/img_list", { id: cid });
   if (res.errorMsg || !res.data) {
     message.error(res.errorMsg);
     return Promise.reject({ res: res, errTip: "获取章节图片失败" });
   }
-  // !!!类型层级不对
-  return {
-    images: res.data,
-    scramble_id: res.scramble_id,
-  };
+
+  return res.data;
 };
 
 const getAlbumComents = async (id: string, page = 1): Promise<CommentsList> => {
@@ -63,6 +59,7 @@ const getAlbumComents = async (id: string, page = 1): Promise<CommentsList> => {
     message.error(res.errorMsg);
     return Promise.reject({ res: res, errTip: "获取漫画评论失败" });
   }
+
   return {
     total: res.data.total,
     list: res.data.list,

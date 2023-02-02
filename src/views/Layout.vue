@@ -1,29 +1,30 @@
 <template>
   <header id="header">
-    <div
-      id="header-content"
-      :style="{ width: $route.meta.expand ? '100%' : '1200px' }"
-    >
+    <div id="header-content" :style="{ width: $route.meta.expand ? '100%' : '1200px' }">
       <div id="main-title">
         <router-link to="/" class="nav-link">ComikNet</router-link>
       </div>
       <div id="route-title">
         {{ $route.meta.title }}
       </div>
+
       <div id="search-box">
-        <a-input-search
-          v-model:value="searchQuery"
-          placeholder="搜索..."
-          enter-button
-          @search="onSearch"
-        />
+        <a-tooltip placement="topRight" title="若要使用标签搜索: 每个标签以空格分开，在每个标签前加上“+”表示条件叠加，
+        加上“-”表示剔除，什么都不加代表只要包含其中一个标签都展示">
+          <a-input-search v-model:value="searchQuery" placeholder="搜索..." enter-button @search="onSearch">
+            <template #addonBefore>
+              <label>使用 </label>
+              <a-select :value="useEngine">
+                <a-select-option value="禁漫天堂">禁漫天堂</a-select-option>
+              </a-select>
+              <label> 引擎</label>
+            </template>
+          </a-input-search>
+        </a-tooltip>
       </div>
 
       <div id="user-bar">
-        <a-avatar
-          src="https://cdn.friendship.org.cn/LightPicture/2023/01/98675cef4ed63f9a.png"
-          size="large"
-        >
+        <a-avatar :src="parseAvatarURL(userStore.photo as string)" size="large">
           <template #icon>
             <UserOutlined />
           </template>
@@ -56,7 +57,7 @@
     </div>
   </header>
   <router-view />
-  <footer id="footer">ComikNet © Friendship org 2023</footer>
+  <footer id="footer">ComikNet © Friendship Studio 2023</footer>
 </template>
 
 <script lang="ts" setup>
@@ -71,11 +72,16 @@ const router = useRouter();
 const mirrorStore = useMirrorStore();
 const userStore = useUserStore();
 const searchQuery = ref("");
+const useEngine = ref("禁漫天堂");
 
 const resetMirror = async () => {
   mirrorStore.reset();
   message.info("已重置镜像");
   console.log("reset");
+};
+
+const parseAvatarURL = (pic: string) => {
+  return `https://${mirrorStore.pic_url}/media/users/${pic}`;
 };
 
 onMounted(async () => {
@@ -140,7 +146,6 @@ const onSearch = async () => {
 }
 
 #header-content {
-  margin: 0 24px;
   height: 64px;
   display: flex;
   align-items: center;

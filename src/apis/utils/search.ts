@@ -8,8 +8,8 @@ const search = async (
   sort?: string
 ): Promise<SearchResult | null> => {
   try {
-    const resp = await get(`/search`, { query, page, sort });
-    if (resp.errorMsg) {
+    const resp = await get<SearchResult>(`/search`, { query, page, sort });
+    if (resp.errorMsg || !resp.data) {
       message.error(resp.errorMsg);
       return null;
     }

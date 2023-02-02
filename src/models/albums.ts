@@ -60,8 +60,8 @@ export interface ChapterResponse {
   }>;
 }
 export interface ChapterImageData {
-  images: Array<string>;
-  scramble_id: string;
+  img_list: string[];
+  scramble_id: number;
 }
 
 export enum sortRules {

@@ -35,12 +35,30 @@ const routes = [
         },
       },
       {
+        path: "tags",
+        name: "Tags",
+        component: () => import("@/views/tags.vue"),
+        meta: {
+          title: "高级搜索",
+          expand: true,
+        },
+      },
+      {
         path: "/user",
         name: "User",
         component: () => import("@/views/UserControl/user.vue"),
         meta: {
           title: "个人中心",
           expand: false,
+        },
+      },
+      {
+        path: "/history",
+        name: "History",
+        component: () => import("@/views/UserControl/history.vue"),
+        meta: {
+          title: "历史记录",
+          expand: true,
         },
       },
       {
