@@ -26,7 +26,7 @@
               <a-empty v-if="userStore.badges.length === 0" description="您还没有任何勋章" :image="Empty.PRESENTED_IMAGE_SIMPLE"
                 class="empty-col" />
               <a-tooltip v-for="item in userStore.badges" :key="item.id" :title="item.name">
-                <img :src="parseMedalURL(item.content)" />
+                <img :src="parseMedalURL(item.content)" class="medal-pic" />
               </a-tooltip>
             </a-descriptions-item>
           </a-descriptions>
@@ -101,6 +101,13 @@ const parseMedalURL = (medal: string | undefined) => {
   align-items: center;
   flex-direction: column;
   width: 250px;
+}
+
+.medal-pic {
+  width: 48px;
+  height: 48px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+  margin-right: 8px;
 }
 
 #progressbar-title {

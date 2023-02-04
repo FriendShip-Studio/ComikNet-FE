@@ -279,8 +279,13 @@ watch(
     () => router.currentRoute.value.params.id,
     (newID) => {
         if (!newID || typeof newID !== "string") {
-            router.push("/404");
-            return;
+            if (router.currentRoute.value.path.startsWith("/album")) {
+                router.push("/404");
+                message.warn("无效的漫画ID");
+                return;
+            } else {
+                return;
+            }
         }
         albumID.value = newID;
         resetLoaded();

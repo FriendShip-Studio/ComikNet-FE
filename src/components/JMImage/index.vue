@@ -1,5 +1,5 @@
 <template>
-  <a-spin tip="再等会，要出来了" :spinning="isLoading">
+  <a-spin tip="请稍等，漫画图片正在加载..." :spinning="isLoading">
     <div class="jm-image-wrapper">
       <canvas class="jm-image" ref="canvas" />
     </div>

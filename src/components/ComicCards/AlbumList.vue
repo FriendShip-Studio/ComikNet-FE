@@ -50,7 +50,7 @@ const parseCoverURL = (id: string) => {
 
 .comic-item:hover {
   transform: perspective(280px) rotateX(1deg);
-  box-shadow: 0 0 10px 0 purple;
+  box-shadow: 0 0 10px 0 #39c5bb;
 }
 
 .comic-title {

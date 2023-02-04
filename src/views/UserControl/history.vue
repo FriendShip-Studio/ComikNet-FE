@@ -58,10 +58,10 @@ const getHistoryList = async () => {
         }
         historyList.value = await ComikNetCore.getHistoryList(userStore.uid);
         for (let item of historyList.value) {
-            if (historyTimeDict.value.has(item.update_date)) {
-                historyTimeDict.value.get(item.update_date)?.push(await album.getAlbumInfo(item.cid));
+            if (historyTimeDict.value.has(item.update_time)) {
+                historyTimeDict.value.get(item.update_time)?.push(await album.getAlbumInfo(item.cid));
             } else {
-                historyTimeDict.value.set(item.update_date, [await album.getAlbumInfo(item.cid)]);
+                historyTimeDict.value.set(item.update_time, [await album.getAlbumInfo(item.cid)]);
             }
         }
         setLoaded(true);
