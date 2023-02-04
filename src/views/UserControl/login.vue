@@ -9,26 +9,12 @@
             注册
           </span>
         </div>
-        <a-form
-          :model="loginForm"
-          name="basic"
-          :label-col="{ span: 6 }"
-          :wrapper-col="{ span: 18 }"
-          autocomplete="on"
-          @finish="handleLogin"
-        >
-          <a-form-item
-            label="用户名"
-            name="username"
-            :rules="[{ required: true, message: '用户名不能为空!' }]"
-          >
+        <a-form :model="loginForm" name="basic" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }" autocomplete="on"
+          @finish="handleLogin">
+          <a-form-item label="用户名" name="username" :rules="[{ required: true, message: '用户名不能为空!' }]">
             <a-input v-model:value="loginForm.username" />
           </a-form-item>
-          <a-form-item
-            label="密码"
-            name="password"
-            :rules="[{ required: true, message: '密码不能为空!' }]"
-          >
+          <a-form-item label="密码" name="password" :rules="[{ required: true, message: '密码不能为空!' }]">
             <a-input-password v-model:value="loginForm.password" />
           </a-form-item>
           <a-form-item name="remember" :wrapper-col="{ offset: 6, span: 18 }">
@@ -38,6 +24,9 @@
           </a-form-item>
           <div id="btn-wrapper">
             <a-button type="link">忘记密码</a-button>
+            <a-button class="resetMirror" type="link" @click="resetMirror">
+              重新选择镜像
+            </a-button>
             <a-button type="primary" html-type="submit" :loading="isPending">
               登录
             </a-button>
@@ -54,9 +43,11 @@ import { reactive } from "vue";
 import useUserStore from "@/store/user";
 import { useRouter } from "vue-router";
 import useToggle from "@/utils/useToggle";
+import useMirrorStore from "@/store/mirror";
 
 const router = useRouter();
 const userStore = useUserStore();
+const mirrorStore = useMirrorStore();
 const { val: isPending, set: setPending } = useToggle(false);
 
 const loginForm = reactive<LoginForm>({
@@ -72,6 +63,11 @@ const handleLogin = async (loginForm: LoginForm) => {
     await router.push("/");
   }
   setPending(false);
+};
+
+const resetMirror = async () => {
+  mirrorStore.reset();
+  message.info("已重置镜像");
 };
 </script>
 
@@ -96,6 +92,10 @@ const handleLogin = async (loginForm: LoginForm) => {
 #card-title {
   font-size: 2em;
   margin-bottom: 24px;
+}
+
+.resetMirror {
+  margin-right: 64px;
 }
 
 .gray {

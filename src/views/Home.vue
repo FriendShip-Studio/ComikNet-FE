@@ -30,7 +30,7 @@
           </div>
         </a-carousel>
       </div>
-      
+
       <img src="https://cdn.friendship.org.cn/LightPicture/2023/02/b0e5a742b92be7bf.webp" alt="Friendship Studio"
         class="banner" />
       <img src="https://cdn.friendship.org.cn/LightPicture/2022/12/267ad8dd86655b10.jpg" alt="Friendship Cloud"
@@ -42,7 +42,10 @@
 
 <script lang="ts" setup>
 import useToggle from "@/utils/useToggle";
+import { useRouter } from "vue-router";
 import { LeftCircleOutlined, RightCircleOutlined } from "@ant-design/icons-vue";
+
+const router = useRouter();
 
 const { val: loaded, set: setLoaded } = useToggle(false);
 </script>

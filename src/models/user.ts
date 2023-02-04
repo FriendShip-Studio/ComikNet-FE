@@ -65,4 +65,9 @@ export interface UserState {
   exp?: string;
   expPercent?: number;
   album_favorites_max?: number;
+  badges: Array<{
+    content: string;
+    name: string;
+    id: string;
+  }>;
 }

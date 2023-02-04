@@ -10,6 +10,10 @@ const requests = axios.create({
   headers: {},
 });
 
+const picTestReq = axios.create({
+  timeout: 15000
+});
+
 requests.interceptors.request.use(
   (config: AxiosRequestConfig) => {
     return config;
@@ -34,6 +38,7 @@ requests.interceptors.response.use(
     } else {
       warn = `${err.code}: ${err.message}`;
     }
+    console.log(warn);
     message.error(warn);
     return Promise.reject(warn);
   }
@@ -55,4 +60,4 @@ const post = <T = unknown>(
   return requests.post(url, data, { ...config });
 };
 
-export { get, post };
+export { get, post, picTestReq };

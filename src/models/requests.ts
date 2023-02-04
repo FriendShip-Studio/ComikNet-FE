@@ -9,3 +9,8 @@ export interface MirrorResponse {
   pic_msg: string;
 }
 
+export interface FavorResponse {
+  status: string;
+  msg: string;
+  type: string;
+}

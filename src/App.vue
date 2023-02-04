@@ -4,6 +4,7 @@ import { notification } from "ant-design-vue";
 import { reactive, ref, watch } from "vue";
 import useToggle from "@/utils/useToggle";
 import mirror from "@/apis/utils/mirror";
+import { CloudServerOutlined } from "@ant-design/icons-vue";
 import type {
   ApiMirrorStatus,
   MirrorState,
@@ -82,15 +83,11 @@ const rules = {
 
 <template>
   <RouterView />
-  <a-modal
-    v-model:visible="isModalVis"
-    :confirm-loading="isPending"
-    :closable="false"
-    :maskClosable="false"
-    :keyboard="false"
-    title="选择 ComikNet 镜像源"
-  >
+  <a-modal v-model:visible="isModalVis" :confirm-loading="isPending" :closable="false" :maskClosable="false"
+    :keyboard="false" title="选择 ComikNet 镜像源">
     <div id="mirror-settings-notice">
+      <cloud-server-outlined class="mirror-icon" v-if="!isLoaded" />
+      <cloud-server-outlined class="mirror-icon-loaded" v-else />
       <p>
         请先获取一次镜像服务器状态，再根据镜像选项后的延迟选择最优的服务器线路。
       </p>
@@ -106,47 +103,25 @@ const rules = {
         <a-button block type="primary" @click="getMirrorStatus">
           获取镜像状态
         </a-button>
-        <a-form
-          id="mirror-setting-form"
-          :model="mirrorSettings"
-          name="mirror"
-          :label-col="{ span: 6 }"
-          :wrapper-col="{ span: 18 }"
-          autocomplete="off"
-          @finish="handelSetMirror"
-          v-if="isLoaded"
-          :rules="rules"
-        >
+        <a-form id="mirror-setting-form" :model="mirrorSettings" name="mirror" :label-col="{ span: 6 }"
+          :wrapper-col="{ span: 18 }" autocomplete="off" @finish="handelSetMirror" v-if="isLoaded" :rules="rules">
           <a-form-item label="接口通讯镜像" name="api_url">
-            <a-radio-group
-              v-model:value="mirrorSettings.api_url"
-              button-style="solid"
-            >
-              <a-radio-button
-                v-for="apiMirror in apiList"
-                :key="apiMirror.url"
-                :value="apiMirror.url"
-                block
-              >
+            <a-radio-group v-model:value="mirrorSettings.api_url" button-style="solid">
+              <a-radio-button v-for="apiMirror in apiList" :key="apiMirror.url" :value="apiMirror.url"
+                class="mirror-btn">
                 {{ apiMirror.url }} {{ apiMirror.time }}ms
               </a-radio-button>
             </a-radio-group>
           </a-form-item>
           <a-form-item label="漫画图片镜像" name="pic_url">
-            <a-radio-group
-              v-model:value="mirrorSettings.pic_url"
-              button-style="solid"
-            >
-              <a-radio-button
-                v-for="picMirror in picList"
-                :key="picMirror.url"
-                :value="picMirror.url"
-              >
+            <a-radio-group v-model:value="mirrorSettings.pic_url" button-style="solid">
+              <a-radio-button v-for="picMirror in picList" :key="picMirror.url" :value="picMirror.url"
+                class="mirror-btn">
                 {{ picMirror.url }} {{ picMirror.time }}ms
               </a-radio-button>
             </a-radio-group>
           </a-form-item>
-          <a-button html-type="submit" :loading="isPending" type="primary">
+          <a-button html-type="submit" :loading="isPending" type="primary" block>
             确定
           </a-button>
         </a-form>
@@ -181,7 +156,7 @@ body {
   left: -10px;
   right: -10px;
   bottom: -10px;
-  background-image: url("https://cdn.friendship.org.cn/LightPicture/2022/12/9ea252d45fd6c0ba.jpg");
+  background-image: url("https://cdn.friendship.org.cn/LightPicture/2022/10/1c83da163ffb738b.png");
   background-size: cover;
   background-repeat: no-repeat;
   filter: blur(6px);
@@ -194,5 +169,29 @@ body {
 
 #mirror-setting-form {
   padding-top: 24px;
+}
+
+.mirror-icon {
+  font-size: 58px;
+  color: gray;
+  padding: 0 0 16px 0;
+  position: relative !important;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+
+.mirror-icon-loaded {
+  font-size: 58px;
+  color: #1890ff;
+  padding: 0 0 16px 0;
+  position: relative !important;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.mirror-btn {
+  width: 70%;
+  text-align: left;
 }
 </style>

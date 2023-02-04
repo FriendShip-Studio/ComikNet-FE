@@ -24,7 +24,7 @@
       </div>
 
       <div id="user-bar">
-        <a-avatar :src="parseAvatarURL(userStore.photo as string)" size="large">
+        <a-avatar :src="parseAvatarURL(userStore.photo)" size="large">
           <template #icon>
             <UserOutlined />
           </template>
@@ -77,10 +77,10 @@ const useEngine = ref("禁漫天堂");
 const resetMirror = async () => {
   mirrorStore.reset();
   message.info("已重置镜像");
-  console.log("reset");
 };
 
-const parseAvatarURL = (pic: string) => {
+const parseAvatarURL = (pic: string | undefined) => {
+  if (!pic) return "";
   return `https://${mirrorStore.pic_url}/media/users/${pic}`;
 };
 

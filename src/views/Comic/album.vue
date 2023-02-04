@@ -8,8 +8,8 @@
                         <a-image :width="400" :src="parseCoverURL(albumInfo?.id)" alt="cover" />
                     </div>
                     <div class="album-info">
-                        <a-descriptions v-if="albumLoaded" :column="1" :contentStyle="caonima_zi_zheme_xiao"
-                            :labelStyle="caonima_zi_zheme_xiao">
+                        <a-descriptions v-if="albumLoaded" :column="1" :labelStyle="{ 'font-size': '18px' }"
+                            :contentStyle="{ 'font-size': '16px' }">
                             <a-descriptions-item label="禁漫号">
                                 JM{{ albumInfo.id }}
                             </a-descriptions-item>
@@ -31,9 +31,8 @@
                                 </div>
                             </a-descriptions-item>
                             <a-descriptions-item label="简介">
-                                <span class="gray-tip" v-if="
-                                    !albumInfo.description || albumInfo.description.length === 0
-                                ">
+                                <span class="gray-tip"
+                                    v-if="!albumInfo.description || albumInfo.description.length === 0">
                                     作品没有简介~
                                 </span>
                                 <span v-else>{{ albumInfo.description }}</span>
@@ -46,9 +45,28 @@
                                 <a-tag color="orange">{{ albumInfo.comment_total }}</a-tag>
                                 <span>条评论</span>
                             </a-descriptions-item>
+                            <a-descriptions-item>
+                                <a-tooltip title="此漫画已收藏，点击以取消收藏">
+                                    <a-button type="primary" v-if="albumInfo.is_favorite" @click="updateFavor"
+                                        :loading="isFavProcessing">
+                                        收藏
+                                        <template #icon>
+                                            <heart-filled />
+                                        </template>
+                                    </a-button>
+                                </a-tooltip>
+                                <a-tooltip title="尚未收藏此漫画，点击以收藏此漫画">
+                                    <a-button v-if="!albumInfo.is_favorite" @click="updateFavor"
+                                        :loading="isFavProcessing">
+                                        收藏
+                                        <template #icon>
+                                            <heart-outlined />
+                                        </template>
+                                    </a-button>
+                                </a-tooltip>
+                            </a-descriptions-item>
                             <a-descriptions-item label="章节列表">
-                                <a-spin :spinning="!chapterLoaded && albumLoaded" tip="加载章节列表中" class="relative-spin">
-                                </a-spin>
+                                <a-spin :spinning="!chapterLoaded && albumLoaded" tip="加载章节列表中" class="relative-spin" />
                                 <div class="content-chapters" v-if="chapterLoaded">
                                     <a-button v-for="chapter in chapterList" :key="chapter.id"
                                         @click="router.push(`/comic/${chapter.cid}`)">
@@ -169,12 +187,13 @@ import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import useMirrorStore from "@/store/mirror";
 import Albums from "@/components/ComicCards/AlbumList.vue";
-import { ApiOutlined, ExportOutlined } from "@ant-design/icons-vue";
+import { ApiOutlined, ExportOutlined, HeartOutlined, HeartFilled } from "@ant-design/icons-vue";
 import album from "@/apis/utils/album";
 import { message } from "ant-design-vue";
 import type { AlbumInfo, ChapterInfo } from "@/models/albums";
 import type { CommentsList } from "@/models/comments";
 import useToggle from "@/utils/useToggle";
+import sleep from "@/utils/useSleep";
 
 const router = useRouter();
 const mirrorStore = useMirrorStore();
@@ -186,14 +205,12 @@ const { val: chapterLoaded, set: setChapterLoaded } = useToggle(false);
 const { val: commentsLoaded, set: setCommentsLoaded } = useToggle(false);
 const { val: isError, set: setIsError } = useToggle(false);
 const { val: showRedirectMirror, set: setShowRedirectMirror } = useToggle(false);
+const { val: isFavProcessing, set: setIsFavProcessing } = useToggle(false);
 
 const albumInfo = ref<AlbumInfo>();
 const chapterList = ref<Array<ChapterInfo>>();
 const commentsList = ref<CommentsList>();
 
-const caonima_zi_zheme_xiao = {
-    "font-size": "20px",
-};
 
 const parseCoverURL = (id: string | undefined) => {
     return `https://${mirrorStore.pic_url}/media/albums/${id}_3x4.jpg`;
@@ -205,6 +222,21 @@ const parseAvatarURL = (pic: string) => {
 
 const commentPageChanged = (p: number) => {
     commentPage.value = p;
+}
+
+const updateFavor = async () => {
+    if (typeof (albumID.value) !== "string") return;
+    if (isFavProcessing.value) return;
+    setIsFavProcessing(true);
+    if (await album.setFavorStat(albumID.value)) {
+        message.success("收藏成功");
+        albumInfo.value!.is_favorite = true;
+    } else {
+        message.success("取消收藏成功");
+        albumInfo.value!.is_favorite = false;
+    }
+    await sleep(1500);
+    setIsFavProcessing(false);
 }
 
 const resetLoaded = () => {
@@ -276,6 +308,11 @@ watch(
     display: flex;
     column-gap: 24px;
 }
+
+.favor-icon {
+    font-size: 24px;
+}
+
 
 .content-chapters {
     display: flex;

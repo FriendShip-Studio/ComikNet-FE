@@ -1,4 +1,4 @@
-import { get } from "@/apis/index";
+import { get, post } from "@/apis/index";
 import { message } from "ant-design-vue";
 import type {
   AlbumInfo,
@@ -6,6 +6,10 @@ import type {
   ChapterInfo,
   ChapterResponse,
 } from "@/models/albums";
+
+import type {
+  FavorResponse,
+} from "@/models/requests";
 import type { CommentsList } from "@/models/comments";
 
 const getAlbumInfo = async (id: string): Promise<AlbumInfo> => {
@@ -43,6 +47,21 @@ const getChapterInfo = async (id: string): Promise<Array<ChapterInfo>> => {
   return chapterInfo;
 };
 
+const setFavorStat = async (aid: string): Promise<boolean> => {
+
+  const res = await post<FavorResponse>("/favorite", { aid });
+  if (res.errorMsg || !res.data || res.data.status != "ok") {
+    message.error(res.errorMsg);
+    return Promise.reject({ res: res, errTip: "设置收藏状态失败" });
+  }
+
+  if (res.data.type === "add") {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 const getChapterImgList = async (cid: string): Promise<ChapterImageData> => {
   const res = await get<ChapterImageData>("/img_list", { id: cid });
   if (res.errorMsg || !res.data) {
@@ -71,4 +90,5 @@ export default {
   getAlbumComents,
   getChapterInfo,
   getChapterImgList,
+  setFavorStat,
 };

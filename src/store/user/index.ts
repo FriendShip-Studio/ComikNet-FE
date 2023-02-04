@@ -22,6 +22,7 @@ const useUserStore = defineStore("user", {
     exp: undefined,
     expPercent: undefined,
     album_favorites_max: undefined,
+    badges: Array()
   }),
 
   getters: {

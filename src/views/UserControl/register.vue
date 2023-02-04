@@ -7,62 +7,32 @@
           <span class="gray">丨</span>
           <span class="title">注册</span>
         </div>
-        <a-form
-          :model="registerForm"
-          name="register"
-          :label-col="{ span: 6 }"
-          :wrapper-col="{ span: 18 }"
-          autocomplete="off"
-          @finish="handleRegister"
-        >
-          <a-form-item
-            label="邮箱"
-            name="email"
-            :rules="[{ required: true, message: '邮箱不能为空!' }]"
-          >
+        <a-form :model="registerForm" name="register" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }"
+          autocomplete="off" @finish="handleRegister">
+          <a-form-item label="邮箱" name="email" :rules="[{ required: true, message: '邮箱不能为空!' }]">
             <a-input v-model:value="registerForm.email" />
           </a-form-item>
-          <a-form-item
-            label="用户名"
-            name="username"
-            :rules="[{ required: true, message: '用户名不能为空!' }]"
-          >
+          <a-form-item label="用户名" name="username" :rules="[{ required: true, message: '用户名不能为空!' }]">
             <a-input v-model:value="registerForm.username" />
           </a-form-item>
-          <a-form-item
-            label="密码"
-            name="password"
-            :rules="[{ required: true, message: '密码不能为空!' }]"
-          >
+          <a-form-item label="密码" name="password" :rules="[{ required: true, message: '密码不能为空!' }]">
             <a-input-password v-model:value="registerForm.password" />
           </a-form-item>
-          <a-form-item
-            label="确认密码"
-            name="confirm_password"
-            :rules="[{ required: true, message: '确认密码不能为空!' }]"
-          >
+          <a-form-item label="确认密码" name="confirm_password" :rules="[{ required: true, message: '确认密码不能为空!' }]">
             <a-input-password v-model:value="registerForm.confirm_password" />
           </a-form-item>
-          <a-form-item
-            label="性别"
-            name="sex"
-            :rules="[{ required: true, message: '必须选择一个性别!' }]"
-          >
+          <a-form-item label="性别" name="sex" :rules="[{ required: true, message: '必须选择一个性别!' }]">
             <a-radio-group v-model:value="registerForm.sex">
               <a-radio value="Male">男</a-radio>
               <a-radio value="Female">女</a-radio>
             </a-radio-group>
           </a-form-item>
-          <a-form-item
-            label="验证码"
-            name="captcha"
-            :rules="[{ required: true, message: '验证码不能为空!' }]"
-          >
+          <a-form-item label="验证码" name="captcha" :rules="[{ required: true, message: '验证码不能为空!' }]">
             <a-input v-model:value="registerForm.captcha" />
             <img src="http://localhost:8000/captcha" alt="验证码" />
           </a-form-item>
           <div id="btn-wrapper">
-            <a-button type="link">已有账号？登录</a-button>
+            <a-button type="link" @click="$router.push('/login')">已有账号？登录</a-button>
             <a-button type="primary" html-type="submit">注册</a-button>
           </div>
         </a-form>

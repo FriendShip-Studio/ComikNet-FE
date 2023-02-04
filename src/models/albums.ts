@@ -76,4 +76,4 @@ export const sortNames: Record<string, string> = {
   mv: "按浏览人数排序",
   mp: "按漫画页数排序",
   tf: "按收藏人数排序",
-};
+}

@@ -9,7 +9,7 @@
         </div>
         <a-back-top />
       </div>
-      <a-button key="return" @click="router.back()" type="primary" block>返回上一页</a-button>
+      <a-button key="return" @click="$router.push(`/album/${chapterID}`)" type="primary" block>返回章节目录</a-button>
     </div>
   </main>
 </template>
@@ -34,9 +34,6 @@ const chapterID = router.currentRoute.value.params.id;
 
 onMounted(() => {
   getChapterImgs();
-  if (typeof (userStore.uid) == "string" && typeof (chapterID) == "string") {
-    ComikNetCore.recordHistory(userStore.uid, chapterID);
-  }
 });
 
 const getChapterImgs = async () => {
@@ -44,6 +41,17 @@ const getChapterImgs = async () => {
     router.push("/404");
     return;
   }
+
+  try {
+    if (typeof (userStore.uid) == "string") {
+      ComikNetCore.recordHistory(userStore.uid, chapterID);
+    } else {
+      console.log("历史记录设置失败！");
+    }
+  } catch (error) {
+    console.log("历史记录设置失败！");
+  }
+
   try {
     const res = await album.getChapterImgList(chapterID);
     imgList.value = res;
