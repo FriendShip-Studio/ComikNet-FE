@@ -3,12 +3,12 @@
     <div class="content">
       <div class="content-title">{{ userStore.username ? userStore.username + " 的个人信息" : "用户信息" }}</div>
       <a-spin tip="再等会，要出来了" :spinning="!loaded" class="absoulte-spin" />
-      <div class="container">
+      <div class="container" v-if="loaded">
         <div class="user-avatar">
           <a-image :width="250" :src="parseAvatarURL(userStore.photo)" :alt="userStore.username"
             fallback="https://cdn.friendship.org.cn/LightPicture/2022/10/406559cff5ae46ea.jpg" />
         </div>
-        <div class="user-info" v-if="loaded">
+        <div class="user-info">
           <a-descriptions :column="1" :labelStyle="{ 'font-size': '18px', 'font-weight': 'bold' }"
             :contentStyle="{ 'font-size': '16px' }">
             <a-descriptions-item label="等级">Lv.{{ userStore.level }} - {{ userStore.level_name }}</a-descriptions-item>
@@ -32,7 +32,7 @@
           </a-descriptions>
           <a-divider />
         </div>
-        <div class="progressbar-container" v-if="loaded">
+        <div class="progressbar-container">
           <p id="progressbar-title">距离下一级还差 {{ userStore.nextLevelExp }} 经验值</p>
           <a-progress type="circle" :stroke-color="{
             '0%': '#108ee9',
@@ -51,6 +51,7 @@ import useMirrorStore from "@/store/mirror";
 import { useRouter } from "vue-router";
 import { ManOutlined, WomanOutlined } from "@ant-design/icons-vue";
 import { Empty } from "ant-design-vue";
+import { onMounted } from "vue";
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -60,7 +61,6 @@ const { val: loaded, set: setLoaded } = useToggle(false);
 
 const parseAvatarURL = (pic: string | undefined) => {
   if (!pic) return "";
-  setLoaded(true);
   return `https://${mirrorStore.pic_url}/media/users/${pic}`;
 };
 
@@ -68,6 +68,14 @@ const parseMedalURL = (medal: string | undefined) => {
   if (!medal) return "";
   return `https://${mirrorStore.pic_url}/${medal}`;
 };
+
+onMounted(async () => {
+  if (await userStore.update()) {
+    setLoaded(true);
+  } else {
+    router.push("/login");
+  };
+})
 
 </script>
 

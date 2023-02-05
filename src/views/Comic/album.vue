@@ -235,7 +235,7 @@ const updateFavor = async () => {
         message.success("取消收藏成功");
         albumInfo.value!.is_favorite = false;
     }
-    await sleep(1500);
+    await sleep(1000);
     setIsFavProcessing(false);
 }
 

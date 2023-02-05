@@ -6,6 +6,7 @@ import type {
   RegisterForm,
 } from "@/models/user";
 import userControl from "@/apis/utils/userControl";
+import pinia from "@/store/index";
 
 const useUserStore = defineStore("user", {
   state: (): UserState => ({
@@ -48,6 +49,44 @@ const useUserStore = defineStore("user", {
         return false;
       }
     },
+    async update(): Promise<boolean> {
+      if (!sessionStorage.login_form && !localStorage.login_form) {
+        return false;
+      }
+
+      if (sessionStorage.login_form) {
+        try {
+          const loginForm = JSON.parse(sessionStorage.login_form);
+          if (await this.login(loginForm)) {
+            console.log("Login from sessionStorage success");
+            return true;
+          } else {
+            return false;
+          }
+          // eslint-disable-next-line
+        } catch (err: any) {
+          return false;
+        }
+      }
+
+      if (localStorage.login_form) {
+        console.log("Login from localStorage");
+        try {
+          const loginForm = JSON.parse(localStorage.login_form);
+          if (await this.login(loginForm)) {
+            console.log("Login from localStorage success");
+            return true;
+          } else {
+            return false;
+          }
+          // eslint-disable-next-line
+        } catch (err: any) {
+          return false;
+        }
+      }
+      
+      return false;
+    },
     async register(values: RegisterForm): Promise<boolean> {
       try {
         return userControl.register({
@@ -67,6 +106,7 @@ const useUserStore = defineStore("user", {
       this.$reset();
       localStorage.removeItem("login_form");
       sessionStorage.removeItem("login_form");
+      sessionStorage.removeItem("user_store");
     },
     setInfo(partial: Partial<UserState>) {
       this.$patch(partial);
@@ -76,5 +116,20 @@ const useUserStore = defineStore("user", {
     },
   },
 });
+
+const watchDog = useUserStore(pinia);
+
+watchDog.$subscribe((_, state) => {
+  sessionStorage.setItem("user_store", JSON.stringify(state));
+});
+
+if (sessionStorage.getItem("user_store") !== null) {
+  try {
+    watchDog.$state = JSON.parse(sessionStorage.getItem("user_store") as string);
+  } catch (e) {
+    console.error(e);
+    sessionStorage.removeItem("user_store");
+  }
+}
 
 export default useUserStore;

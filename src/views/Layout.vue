@@ -85,6 +85,7 @@ const parseAvatarURL = (pic: string | undefined) => {
 };
 
 onMounted(async () => {
+  console.log(userStore);
   if (!userStore.isLogined()) {
     if (!sessionStorage.login_form && !localStorage.login_form) {
       await router.push("/login");
