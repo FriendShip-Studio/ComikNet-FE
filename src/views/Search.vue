@@ -36,7 +36,7 @@
             </a-dropdown>
           </div>
           <div id="result-list">
-            <Albums :album-list="resultList" :is-direct="false" id="result-list" />
+            <Albums :album-list="resultList" id="result-list" />
           </div>
           <div class="page-panel" v-if="resultTotal && resultTotal > 80">
             <a-pagination

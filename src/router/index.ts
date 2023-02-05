@@ -71,7 +71,7 @@ const routes = [
         },
       },
       {
-        path: "album/:id",
+        path: "album/:aid",
         name: "Album",
         component: () => import("@/views/Comic/album.vue"),
         meta: {
@@ -80,7 +80,7 @@ const routes = [
         },
       },
       {
-        path: "comic/:id",
+        path: "comic/:aid/:cid",
         name: "Comic",
         component: () => import("@/views/Comic/page.vue"),
         meta: {

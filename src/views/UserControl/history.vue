@@ -14,7 +14,7 @@
                                     <clock-circle-outlined style="font-size: 16px" />
                                 </template>
                                 <label class="title">{{ time }}</label>
-                                <Albums :album-list="historyTimeDict.get(time)" :is-direct="true" />
+                                <Albums :album-list="historyTimeDict.get(time)" />
                             </a-timeline-item>
                         </a-timeline>
                     </div>
@@ -56,12 +56,12 @@ const getHistoryList = async () => {
             router.push("/login");
             return;
         }
-        historyList.value = await ComikNetCore.getHistoryList(userStore.uid);
+        historyList.value = await ComikNetCore.getUserHistory(userStore.uid);
         for (let item of historyList.value) {
             if (historyTimeDict.value.has(item.update_time)) {
-                historyTimeDict.value.get(item.update_time)?.push(await album.getAlbumInfo(item.cid));
+                historyTimeDict.value.get(item.update_time)?.push(await album.getAlbumInfo(String(item.aid)));
             } else {
-                historyTimeDict.value.set(item.update_time, [await album.getAlbumInfo(item.cid)]);
+                historyTimeDict.value.set(item.update_time, [await album.getAlbumInfo(String(item.aid))]);
             }
         }
         setLoaded(true);

@@ -32,7 +32,7 @@ const getChapterInfo = async (id: string): Promise<Array<ChapterInfo>> => {
 
   if (res.data.series.length === 0) {
     chapterInfo.push({
-      cid: res.data.id,
+      cid: String(res.data.id),
       id: "1",
     });
     return chapterInfo;

@@ -1,5 +1,6 @@
 export interface HistoryRecord {
-    cid: string;
+    aid: number;
+    cid: number;
     update_time: string;
 }
 

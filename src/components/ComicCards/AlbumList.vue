@@ -9,7 +9,7 @@
       </template>
       <div class="comic-item">
         <img :src="parseCoverURL(item.id)"
-          @click="$router.push(props.isDirect ? `/comic/${item.id}` : `/album/${item.id}`)" class="comic-cover" />
+          @click="$router.push(`/album/${item.id}`)" class="comic-cover" />
       </div>
     </a-popover>
   </div>
@@ -23,8 +23,7 @@ import type { AlbumInfo } from "@/models/albums";
 const mirrorStore = useMirrorStore();
 
 const props = defineProps({
-  albumList: Array<AlbumInfo>,
-  isDirect: Boolean
+  albumList: Array<AlbumInfo>
 });
 
 const parseCoverURL = (id: string) => {

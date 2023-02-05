@@ -2,7 +2,7 @@
     <main class="main" :style="{ width: $route.meta.expand ? '100%' : '1200px' }">
         <div class="content">
             <div class="content-title">{{ albumInfo?.name || "漫画详情" }}</div>
-            <a-spin tip="再等会，要出来了" :spinning="!albumLoaded" class="absoulte-spin">
+            <a-spin tip="请稍候，正在加载漫画信息..." :spinning="!albumLoaded" class="absoulte-spin">
                 <div class="content-album" v-if="albumLoaded && albumInfo">
                     <div class="album-cover">
                         <a-image :width="400" :src="parseCoverURL(albumInfo?.id)" alt="cover" />
@@ -49,7 +49,7 @@
                                 <a-tooltip title="此漫画已收藏，点击以取消收藏">
                                     <a-button type="primary" v-if="albumInfo.is_favorite" @click="updateFavor"
                                         :loading="isFavProcessing">
-                                        收藏
+                                        已收藏
                                         <template #icon>
                                             <heart-filled />
                                         </template>
@@ -58,7 +58,7 @@
                                 <a-tooltip title="尚未收藏此漫画，点击以收藏此漫画">
                                     <a-button v-if="!albumInfo.is_favorite" @click="updateFavor"
                                         :loading="isFavProcessing">
-                                        收藏
+                                        未收藏
                                         <template #icon>
                                             <heart-outlined />
                                         </template>
@@ -68,14 +68,22 @@
                             <a-descriptions-item label="章节列表">
                                 <a-spin :spinning="!chapterLoaded && albumLoaded" tip="加载章节列表中" class="relative-spin" />
                                 <div class="content-chapters" v-if="chapterLoaded">
-                                    <a-button v-for="chapter in chapterList" :key="chapter.id"
-                                        @click="router.push(`/comic/${chapter.cid}`)">
-                                        {{ chapter.id }}
-                                    </a-button>
+                                    <span v-for="chapter in chapterList" :key="chapter.id">
+                                        <a-tooltip v-if="String(lastViewedRecord?.cid) == chapter.id"
+                                            :title="`您上次(${lastViewedRecord?.update_time})看到这里`">
+                                            <a-button type="primary" class="last-viewed-btn"
+                                                @click="router.push(`/comic/${albumID}/${chapter.id}`)">
+                                                {{ chapter.id }}
+                                            </a-button>
+                                        </a-tooltip>
+                                        <a-button v-else @click="router.push(`/comic/${albumID}/${chapter.id}`)">
+                                            {{ chapter.id }}
+                                        </a-button>
+                                    </span>
                                 </div>
                             </a-descriptions-item>
                             <a-descriptions-item v-if="chapterLoaded">
-                                <a-button @click="setShowRedirectMirror(true)" type="primary" block>前往源站点阅读</a-button>
+                                <a-button @click="setShowRedirectMirror(true)" type="dashed" block>前往源站点阅读</a-button>
                             </a-descriptions-item>
                         </a-descriptions>
                     </div>
@@ -193,11 +201,13 @@ import { message } from "ant-design-vue";
 import type { AlbumInfo, ChapterInfo } from "@/models/albums";
 import type { CommentsList } from "@/models/comments";
 import useToggle from "@/utils/useToggle";
+import ComikNetCore from "@/database/index";
 import sleep from "@/utils/useSleep";
+import { HistoryRecord } from "@/models/database";
 
 const router = useRouter();
 const mirrorStore = useMirrorStore();
-const albumID = ref(router.currentRoute.value.params.id);
+const albumID = ref(router.currentRoute.value.params.aid);
 const commentPage = ref(1);
 
 const { val: albumLoaded, set: setAlbumLoaded } = useToggle(false);
@@ -210,6 +220,7 @@ const { val: isFavProcessing, set: setIsFavProcessing } = useToggle(false);
 const albumInfo = ref<AlbumInfo>();
 const chapterList = ref<Array<ChapterInfo>>();
 const commentsList = ref<CommentsList>();
+const lastViewedRecord = ref<HistoryRecord | null>();
 
 
 const parseCoverURL = (id: string | undefined) => {
@@ -264,6 +275,7 @@ const update = async (albumID: string) => {
         albumInfo.value = await album.getAlbumInfo(albumID);
         setAlbumLoaded(true);
         chapterList.value = await album.getChapterInfo(albumID);
+        lastViewedRecord.value = await ComikNetCore.getAlbumHistory(albumID);
         setChapterLoaded(true);
         commentsList.value = await album.getAlbumComents(albumID, commentPage.value);
         setCommentsLoaded(true);
@@ -276,12 +288,12 @@ const update = async (albumID: string) => {
 };
 
 watch(
-    () => router.currentRoute.value.params.id,
+    () => router.currentRoute.value.params.aid,
     (newID) => {
         if (!newID || typeof newID !== "string") {
             if (router.currentRoute.value.path.startsWith("/album")) {
-                router.push("/404");
                 message.warn("无效的漫画ID");
+                router.push("/404");
                 return;
             } else {
                 return;
@@ -352,5 +364,9 @@ watch(
     position: relative !important;
     left: 50%;
     transform: translateX(-5%);
+}
+
+.last-viewed-btn{
+    box-shadow: 0 0 10px 0 #95afc0;
 }
 </style>

@@ -46,7 +46,7 @@ export interface ChapterInfo {
 }
 
 export interface ChapterResponse {
-  id: string;
+  id: number;
   name: string;
   tags: string;
   images: Array<string>;

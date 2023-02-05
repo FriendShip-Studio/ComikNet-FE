@@ -39,16 +39,16 @@ requests.interceptors.response.use(
     }
 );
 
-const recordHistory = (uid: string, cid: string) => {
-    return requests.post(`/record?uid=${uid}&cid=${cid}`);
+const recordHistory = (uid: string, aid: string, cid: string) => {
+    return requests.post(`/record?uid=${uid}&aid=${aid}&cid=${cid}`);
 };
 
-const getLatestHistory = (uid: string): Promise<HistoryRecord | null> => {
-    return requests.get(`/latestHistory?uid=${uid}`);
+const getAlbumHistory = (aid: string): Promise<HistoryRecord | null> => {
+    return requests.get(`/history/album?aid=${aid}`);
 }
 
-const getHistoryList = (uid: string): Promise<HistoryRecord[]> => {
-    return requests.get(`/history?uid=${uid}`);
+const getUserHistory = (uid: string): Promise<HistoryRecord[]> => {
+    return requests.get(`/history/user?uid=${uid}`);
 }
 
 const sendComment = (uid: string, aid: string, comment: string) => {
@@ -65,8 +65,8 @@ const getComments = (aid?: string, uid?: string): Promise<Comment[] | null> => {
 
 export default {
     recordHistory,
-    getLatestHistory,
-    getHistoryList,
+    getAlbumHistory,
+    getUserHistory,
     sendComment,
     getComments
 }

@@ -4,7 +4,7 @@
       <div class="content-title">收藏夹</div>
       <a-spin tip="正在加载，请稍候..." :spinning="!loaded" class="absoulte-spin" />
       <div v-if="favList && favList.length > 0">
-        <Albums :album-list="favList" :is-direct="false" id="fav-list" />
+        <Albums :album-list="favList" id="fav-list" />
       </div>
       <div v-else-if="favList && favList.length === 0" class="absoulte-spin">
         <question-outlined class="empty-icon" />
