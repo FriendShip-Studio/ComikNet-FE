@@ -14,3 +14,7 @@ export interface PicMirrorStatus {
   time: number;
 }
 
+export interface WebSiteURL {
+  name: string;
+  url: string;
+}

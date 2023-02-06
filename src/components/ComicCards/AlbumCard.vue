@@ -49,7 +49,7 @@ import album from "@/apis/utils/album";
 import type { AlbumInfo } from "@/models/albums";
 
 const props = defineProps({
-  id: String,
+  id: String
 });
 
 const loading = ref(true);

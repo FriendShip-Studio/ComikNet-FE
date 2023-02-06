@@ -82,7 +82,7 @@ const rules = {
 </script>
 
 <template>
-  <RouterView />
+    <RouterView />
   <a-modal v-model:visible="isModalVis" :confirm-loading="isPending" :closable="false" :maskClosable="false"
     :keyboard="false" title="选择 ComikNet 镜像源">
     <div id="mirror-settings-notice">
@@ -127,7 +127,7 @@ const rules = {
         </a-form>
       </div>
     </a-spin>
-    <template #footer> </template>
+    <template #footer />
   </a-modal>
 </template>
 
@@ -149,17 +149,18 @@ body {
   min-height: 100vh;
 }
 
+
 #app::before {
   content: "";
   position: fixed;
   top: -10px;
-  left: -10px;
+  left: -314px;
   right: -10px;
   bottom: -10px;
-  background-image: url("https://cdn.friendship.org.cn/LightPicture/2022/10/1c83da163ffb738b.png");
+  background-image: url("https://cdn.friendship.org.cn/LightPicture/2023/02/1d548d781e9e9c62.jpg");
   background-size: cover;
   background-repeat: no-repeat;
-  filter: blur(6px);
+  filter: blur(2px);
   z-index: -1;
 }
 

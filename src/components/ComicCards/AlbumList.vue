@@ -1,6 +1,7 @@
 <template>
   <div class="album-list">
-    <a-popover placement="right" :mouseEnterDelay="0.5" v-for="item in props.albumList" :key="item.id">
+    <a-popover :mouseEnterDelay="0.5" v-for="item in props.albumList" :key="item.id"
+      :placement="((props.albumList?.indexOf(item)!) % 6) >= 3 ? 'left' : 'right'">
       <template #content>
         <AlbumCard :id="item.id" />
       </template>
@@ -8,8 +9,7 @@
         <div class="comic-title">{{ item.name }}</div>
       </template>
       <div class="comic-item">
-        <img :src="parseCoverURL(item.id)"
-          @click="$router.push(`/album/${item.id}`)" class="comic-cover" />
+        <img :src="parseCoverURL(item.id)" @click="$router.push(`/album/${item.id}`)" class="comic-cover" />
       </div>
     </a-popover>
   </div>

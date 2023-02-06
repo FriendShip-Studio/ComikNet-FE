@@ -3,8 +3,10 @@ import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import { message } from "ant-design-vue";
 import { ApiRequest } from "@/models/requests";
 
+const BE_URL = "/api"
+
 const requests = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: BE_URL,
   timeout: 30000,
   withCredentials: true,
   headers: {},
@@ -12,6 +14,13 @@ const requests = axios.create({
 
 const picTestReq = axios.create({
   timeout: 15000
+});
+
+const captchaReq = axios.create({
+  baseURL: BE_URL,
+  timeout: 30000,
+  withCredentials: true,
+  headers: {},
 });
 
 requests.interceptors.request.use(
@@ -60,4 +69,4 @@ const post = <T = unknown>(
   return requests.post(url, data, { ...config });
 };
 
-export { get, post, picTestReq };
+export { get, post, picTestReq, captchaReq };

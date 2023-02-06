@@ -57,7 +57,15 @@
     </div>
   </header>
   <router-view />
-  <footer id="footer">ComikNet © Friendship Studio 2023</footer>
+
+  <footer id="footer">
+    <div>
+      ComikNet © Friendship Studio 2023
+    </div>
+    <div>
+      ComikNet Insider Preview 内部构建版本
+    </div>
+  </footer>
 </template>
 
 <script lang="ts" setup>
@@ -184,6 +192,9 @@ const onSearch = async () => {
 
 #footer {
   text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 16px;
 }
 
 #bar-username {
@@ -231,6 +242,12 @@ const onSearch = async () => {
 
 #route-title {
   display: none;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  padding: 15px;
 }
 
 @media (max-width: 1200px) {

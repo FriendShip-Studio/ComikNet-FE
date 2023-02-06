@@ -38,7 +38,7 @@
           <div id="result-list">
             <Albums :album-list="resultList" id="result-list" />
           </div>
-          <div class="page-panel" v-if="resultTotal && resultTotal > 80">
+          <div class="pagination-container" v-if="resultTotal && resultTotal > 80">
             <a-pagination
               :current="Number(page)"
               simple
@@ -184,13 +184,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-#result-list {
-  padding: 24px;
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  justify-items: center;
-  gap: 24px;
-}
 
 @media (max-width: 1500px) {
   #result-list {

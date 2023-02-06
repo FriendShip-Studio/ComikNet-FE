@@ -29,7 +29,10 @@
           </a-form-item>
           <a-form-item label="验证码" name="captcha" :rules="[{ required: true, message: '验证码不能为空!' }]">
             <a-input v-model:value="registerForm.captcha" />
-            <img src="http://localhost:8000/captcha" alt="验证码" />
+            <div class="captcha">
+              <img :src="captchaData" alt="验证码" @click="getCaptcha" v-if="!isCaptchaLoading" />
+              <a-spin tip="正在加载验证码..." :spinning="isCaptchaLoading" v-if="isCaptchaLoading" />
+            </div>
           </a-form-item>
           <div id="btn-wrapper">
             <a-button type="link" @click="$router.push('/login')">已有账号？登录</a-button>
@@ -43,8 +46,10 @@
 <script lang="ts" setup>
 import type { RegisterForm } from "@/models/user";
 import { message } from "ant-design-vue";
-import { reactive } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import useUserStore from "@/store/user";
+import { captchaReq } from "@/apis";
+import useToggle from "@/utils/useToggle";
 
 const userStore = useUserStore();
 const registerForm = reactive<RegisterForm>({
@@ -55,6 +60,25 @@ const registerForm = reactive<RegisterForm>({
   captcha: "",
   sex: "",
 });
+
+const captchaData = ref("");
+
+const { val: isCaptchaLoading, set: setCaptchaLoading } = useToggle(false);
+
+onMounted(() => {
+  getCaptcha();
+});
+
+const getCaptcha = async () => {
+  setCaptchaLoading(true);
+
+  const res = await captchaReq.get("/captcha", {
+    responseType: "blob",
+  });
+
+  captchaData.value = window.URL.createObjectURL(res.data);
+  setCaptchaLoading(false);
+};
 
 const handleRegister = async (registerForm: RegisterForm) => {
   if (registerForm.password !== registerForm.confirm_password) {
@@ -103,5 +127,12 @@ const handleRegister = async (registerForm: RegisterForm) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.captcha {
+  display: flex;
+  justify-content: flex;
+  align-items: center;
+  margin-top: 16px;
 }
 </style>

@@ -1,7 +1,7 @@
 import { get, picTestReq } from "@/apis/index";
 import { message } from "ant-design-vue";
 import { MirrorResponse } from "@/models/requests";
-import { ApiMirrorStatus, PicMirrorStatus } from "@/models/mirror";
+import { ApiMirrorStatus, PicMirrorStatus, WebSiteURL } from "@/models/mirror";
 
 const setMirror = async (api?: string, pic?: string) => {
   const res = await get<MirrorResponse>("/mirror", { api, pic });
@@ -47,8 +47,19 @@ const getPicSpeed = async (): Promise<Array<PicMirrorStatus>> => {
   return mirror_status;
 };
 
+const getSiteList = async () => {
+  const res = await get<WebSiteURL[]>("/speed/web");
+  if (!res.data) {
+    message.error("尝试获取网站镜像源列表时出错!");
+    return Promise.reject(res);
+  }
+
+  return res.data;
+}
+
 export default {
   setMirror,
   getApiSpeed,
   getPicSpeed,
+  getSiteList
 };
