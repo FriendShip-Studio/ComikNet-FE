@@ -59,6 +59,7 @@ const parseCoverURL = (id: string) => {
   transition-duration: 0.3s;
   transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
   transition-property: all;
+  cursor: pointer;
 }
 
 .comic-cover {
@@ -83,6 +84,7 @@ const parseCoverURL = (id: string) => {
   display: flex;
   flex-direction: column;
   color: white;
+  pointer-events: none;
 }
 
 .comic-overlay-title {
@@ -109,7 +111,7 @@ const parseCoverURL = (id: string) => {
 .comic-item:hover {
   box-shadow: 0 0 10px 0 #9a9594;
 }
-.comic-item:hover .comic-cover{
+.comic-item:hover .comic-cover {
   transform: scale(1.1, 1.1);
 }
 .comic-item:hover .comic-overlay {

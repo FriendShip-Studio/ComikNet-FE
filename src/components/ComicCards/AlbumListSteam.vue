@@ -110,11 +110,13 @@ const parseCoverURL = (id: string) => {
   flex-direction: column;
   color: white;
   justify-content: flex-end;
+  pointer-events: none;
 }
 
 .comic-overlay-title {
   padding: 0 4px 0 4px;
   background-color: rgba(0, 0, 0, 0.5);
+  pointer-events: all;
 }
 
 .comic-item:hover {
