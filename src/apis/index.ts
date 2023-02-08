@@ -3,7 +3,7 @@ import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import { message } from "ant-design-vue";
 import { ApiRequest } from "@/models/requests";
 
-const BE_URL = "/api"
+const BE_URL = "http://localhost:8000"
 
 const requests = axios.create({
   baseURL: BE_URL,

@@ -7,8 +7,14 @@ export interface AlbumInfo {
   name: string;
 
   // 搜索与收藏数据
-  category?: any;
-  category_sub?: any;
+  category?: {
+    id: string;
+    title: string;
+  };
+  category_sub?: {
+    id: string;
+    title: string;
+  };
 
   // 详情页数据
   total_views?: string;

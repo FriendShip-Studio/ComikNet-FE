@@ -36,17 +36,11 @@
             </a-dropdown>
           </div>
           <div id="result-list">
-            <Albums :album-list="resultList" id="result-list" />
+            <Albums :album-list="resultList" id="result-list" :isRibbon="true" />
           </div>
           <div class="pagination-container" v-if="resultTotal && resultTotal > 80">
-            <a-pagination
-              :current="Number(page)"
-              simple
-              :default-current="1"
-              :total="Math.ceil(resultTotal / 80) * 10"
-              :min="1"
-              @change="pageChanged"
-            />
+            <a-pagination :current="Number(page)" simple :default-current="1" :total="Math.ceil(resultTotal / 80) * 10"
+              :min="1" @change="pageChanged" />
           </div>
           <a-back-top />
         </div>
@@ -184,7 +178,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-
 @media (max-width: 1500px) {
   #result-list {
     grid-template-columns: repeat(5, 1fr);

@@ -4,7 +4,7 @@ import { message } from "ant-design-vue";
 import { HistoryRecord, Comment } from "@/models/database";
 
 const requests = axios.create({
-    baseURL: "/database",
+    baseURL: "http://localhost:8080",
     timeout: 30000,
     withCredentials: true,
     headers: {},
@@ -44,8 +44,8 @@ const recordHistory = (uid: string, aid: string, cid: string) => {
     return requests.post(`/record?uid=${uid}&aid=${aid}&cid=${cid}`);
 };
 
-const getAlbumHistory = (aid: string): Promise<HistoryRecord | null> => {
-    return requests.get(`/history/album?aid=${aid}`);
+const getAlbumHistory = (uid: string, aid: string): Promise<HistoryRecord | null> => {
+    return requests.get(`/history/album?uid=${uid}&aid=${aid}`);
 }
 
 const getUserHistory = (uid: string): Promise<HistoryRecord[]> => {

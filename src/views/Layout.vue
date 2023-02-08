@@ -188,6 +188,7 @@ const onSearch = async () => {
   display: flex;
   align-items: center;
   font-size: 16px;
+  padding: 0 16px;
 }
 
 #footer {

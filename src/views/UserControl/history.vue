@@ -5,8 +5,9 @@
             <div class="historyList">
                 <a-spin tip="请稍候，正在加载" :spinning="!loaded" class="absoulte-spin">
                     <div v-if="historyList.length > 0">
-                        <label>按   </label>
-                        <a-switch @click="setReversed(!isReversed)" :checked="isReversed" checked-children="从旧到新" un-checked-children="从新到旧" />
+                        <label>按 </label>
+                        <a-switch @click="setReversed(!isReversed)" :checked="isReversed" checked-children="从旧到新"
+                            un-checked-children="从新到旧" />
                         <label> 的顺序展示您的历史记录</label>
                         <a-timeline :reverse="isReversed" class="historyList" v-if="loaded">
                             <a-timeline-item v-for="time in historyTimeDict.keys()" :key="time">
@@ -14,7 +15,7 @@
                                     <clock-circle-outlined style="font-size: 16px" />
                                 </template>
                                 <label class="title">{{ time }}</label>
-                                <Albums :album-list="historyTimeDict.get(time)" />
+                                <Albums :album-list="historyTimeDict.get(time)" :isHistory="true" />
                             </a-timeline-item>
                         </a-timeline>
                     </div>
@@ -40,6 +41,7 @@ import type { AlbumInfo } from "@/models/albums";
 import album from "@/apis/utils/album";
 import { message } from "ant-design-vue";
 import { ClockCircleOutlined } from "@ant-design/icons-vue"
+import { datetimeFormatter } from "@/utils/timeFormatter";
 
 const router = useRouter();
 const { val: loaded, set: setLoaded } = useToggle(false);
@@ -58,10 +60,10 @@ const getHistoryList = async () => {
         }
         historyList.value = await ComikNetCore.getUserHistory(userStore.uid);
         for (let item of historyList.value) {
-            if (historyTimeDict.value.has(item.update_time)) {
-                historyTimeDict.value.get(item.update_time)?.push(await album.getAlbumInfo(String(item.aid)));
+            if (historyTimeDict.value.has(datetimeFormatter(item.update_time))) {
+                historyTimeDict.value.get(datetimeFormatter(item.update_time))?.push(await album.getAlbumInfo(String(item.aid)));
             } else {
-                historyTimeDict.value.set(item.update_time, [await album.getAlbumInfo(String(item.aid))]);
+                historyTimeDict.value.set(datetimeFormatter(item.update_time), [await album.getAlbumInfo(String(item.aid))]);
             }
         }
         setLoaded(true);

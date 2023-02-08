@@ -18,14 +18,16 @@
                                     没有作者信息~
                                 </span>
                                 <span v-else>
-                                    <a-tag v-for="author in albumInfo.author" :key="author" color="#39c5bb">
+                                    <a-tag class="tag" v-for="author in albumInfo.author" :key="author" color="#39c5bb"
+                                        @click="router.push(`/search?query=${author}&page=1&sort=mr`)">
                                         {{ author }}
                                     </a-tag>
                                 </span>
                             </a-descriptions-item>
                             <a-descriptions-item label="标签">
                                 <div class="tag-wrapper">
-                                    <a-tag v-for="tag in albumInfo.tags" :key="tag" color="blue">
+                                    <a-tag class="tag" v-for="tag in albumInfo.tags" :key="tag" color="blue"
+                                        @click="router.push(`/search?query=${tag}&page=1&sort=mr`)">
                                         {{ tag }}
                                     </a-tag>
                                 </div>
@@ -109,10 +111,9 @@
                                         </a-button>
                                     </a-tooltip>
                                     <a-tooltip color="red" title="功能暂不可用，敬请期待!">
-                                        <a-button :type="albumInfo.liked ? 'primary' : 'default'" danger disabled>
-                                            <HeartFilled v-if="albumInfo.liked" />
-                                            <HeartOutlined v-else />
-                                            设为喜爱的漫画
+                                        <a-button disabled>
+                                            <share-alt-outlined />
+                                            分享到 ComikNet
                                         </a-button>
                                     </a-tooltip>
                                 </span>
@@ -124,7 +125,8 @@
                                         <span v-if="chapterList && chapterList?.length <= 80"
                                             v-for="chapter in chapterList" :key="chapter.id">
                                             <a-tooltip v-if="String(lastViewedRecord?.cid) == chapter.id"
-                                                :title="`您上次(${lastViewedRecord?.update_time})看到这里`">
+                                                :destroyTooltipOnHide="true"
+                                                :title="`您 ${datetimeFormatter(lastViewedRecord?.update_time)} 看到这里`">
                                                 <a-button type="primary" class="chapters-btn last-viewed-btn"
                                                     @click="router.push(`/comic/${albumID}/${chapter.id}`)">
                                                     {{ chapter.id }}
@@ -139,7 +141,8 @@
                                             v-for="chapter in chapterList.slice((chaptersPage - 1) * 60, chaptersPage * 60)"
                                             :key="chapter.id">
                                             <a-tooltip v-if="String(lastViewedRecord?.cid) == chapter.id"
-                                                :title="`您上次(${lastViewedRecord?.update_time})看到这里`">
+                                                :destroyTooltipOnHide="true"
+                                                :title="`您 ${datetimeFormatter(lastViewedRecord?.update_time)} 看到这里`">
                                                 <a-button type="primary" class="chapters-btn last-viewed-btn"
                                                     @click="router.push(`/comic/${albumID}/${chapter.id}`)">
                                                     {{ chapter.id }}
@@ -151,8 +154,9 @@
                                             </a-button>
                                         </span>
                                     </span>
-                                    <a-pagination class="chapters-page-panel" :current="chaptersPage" simple
-                                        :default-current="1" :total="albumInfo.series?.length! * 10 / 60" :min="1"
+                                    <a-pagination v-if="chapterList && chapterList?.length > 80"
+                                        class="chapters-page-panel" :current="chaptersPage" simple :default-current="1"
+                                        :total="albumInfo.series?.length! * 10 / 60" :min="1"
                                         @change="chaptersPageChanged" />
                                 </span>
                             </a-descriptions-item>
@@ -198,7 +202,7 @@
                             :total="Number(commentsList.total)" :min="1" @change="commentPageChanged" />
                     </div>
                 </div>
-                <div v-else-if="commentsLoaded && commentsFailed" class="comment-error-container">
+                <div v-else-if="commentsLoaded && commentsFailed" class="comments comment-error-container">
                     <stop-outlined style="font-size: 48px; margin-bottom: 15px;" />
                     <h2>漫画评论区暂不可用</h2>
                 </div>
@@ -297,12 +301,13 @@
 import { ref, watch, h } from "vue";
 import { useRouter } from "vue-router";
 import useMirrorStore from "@/store/mirror";
+import useUserStore from "@/store/user";
 import Albums from "@/components/ComicCards/AlbumList.vue";
 import {
     ApiOutlined, ExportOutlined, LikeOutlined, EyeOutlined,
     StarFilled, StarOutlined, MessageOutlined, BookOutlined,
     FieldTimeOutlined, EyeInvisibleOutlined, StopOutlined,
-    HeartOutlined, HeartFilled, HistoryOutlined, ReloadOutlined
+    ShareAltOutlined, HistoryOutlined, ReloadOutlined
 } from "@ant-design/icons-vue";
 import album from "@/apis/utils/album";
 import { message, notification } from "ant-design-vue";
@@ -311,12 +316,14 @@ import type { CommentsList } from "@/models/comments";
 import type { WebSiteURL } from "@/models/mirror";
 import useToggle from "@/utils/useToggle";
 import ComikNetCore from "@/database/index";
+import { datetimeFormatter } from "@/utils/timeFormatter";
 import mirror from "@/apis/utils/mirror";
 import sleep from "@/utils/useSleep";
 import { HistoryRecord } from "@/models/database";
 
 const router = useRouter();
 const mirrorStore = useMirrorStore();
+const userStore = useUserStore();
 const albumID = ref(router.currentRoute.value.params.aid);
 const commentPage = ref(1);
 const chaptersPage = ref(1);
@@ -405,7 +412,10 @@ const update = async (albumID: string) => {
         setIsError(true);
     }
     try {
-        lastViewedRecord.value = await ComikNetCore.getAlbumHistory(albumID);
+        if (!userStore.uid) {
+            throw new Error("User not logged in");
+        }
+        lastViewedRecord.value = await ComikNetCore.getAlbumHistory(userStore.uid, albumID);
     } catch (error: any) {
         setHistoryFailed(true);
         notification.error({
@@ -467,10 +477,32 @@ watch(
 </script>
 
 <style>
+.album-cover {
+    margin-left: 35px;
+    box-shadow: 0 0 5px 0 #95afc0;
+}
+
+.album-info {
+    margin-left: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 .content-album {
     padding: 24px;
     display: flex;
     column-gap: 24px;
+}
+
+.tag {
+    margin-left: 4px;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.tag:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 5px 0 #95afc0;
 }
 
 .favor-icon {
@@ -571,5 +603,9 @@ watch(
 .area-title {
     font-size: 24px;
     font-weight: bold;
+}
+
+.comments {
+    padding: 0 24px 24px;
 }
 </style>
