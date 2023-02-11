@@ -191,17 +191,6 @@ watch(
     if (page && imgList.value) {
       anchorHref.value = `#${page}`;
     }
-    if (!readingPage.value) return;
-    const ele = document.getElementById(readingPage.value.toString());
-    if (!ele) return;
-    router.push(
-      `${router.currentRoute.value.path}#${readingPage.value.toString()}`
-    );
-    ele.scrollIntoView({
-      behavior: "smooth", //定义过渡动画。其中一个auto或smooth。默认为auto.
-      block: "start", //定义垂直对齐。一start，center，end，或 nearest。默认为start.
-      inline: "nearest", //定义水平对齐方式。一start，center，end，或 nearest。默认为nearest.
-    });
   }
 );
 
