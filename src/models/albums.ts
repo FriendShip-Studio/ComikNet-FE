@@ -70,6 +70,10 @@ export interface ChapterImageData {
   scramble_id: number;
 }
 
+export interface PageStatus {
+  nowPage?: number;
+}
+
 export enum sortRules {
   time = "mr",
   click = "mv",

@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import pinia from "@/store/index";
-import { MirrorState } from "@/models/mirror";
+import type { MirrorState } from "@/models/mirror";
 
 export const PERSIST_KEY = "mirror_store_persist";
 

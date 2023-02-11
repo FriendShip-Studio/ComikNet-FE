@@ -1,22 +1,34 @@
 <template>
   <a-spin tip="请稍等，漫画图片正在加载..." :spinning="isLoading">
-    <div class="jm-image-wrapper">
-      <canvas class="jm-image" ref="canvas" />
+    <div class="jm-image-wrapper" :id="pageNumber?.toString()">
+      <canvas class=" jm-image" ref="canvas" />
+    </div>
+    <div class="image-footer">
+      <h3 id="page-number">{{ pageNumber }}</h3>
     </div>
   </a-spin>
 </template>
 <script lang="ts" setup>
 import useToggle from "@/utils/useToggle";
-import { ref, watch } from "vue";
+import { nextTick, onUnmounted, ref, watch } from "vue";
 import md5 from "md5";
+import { useIntersectionObserver } from "@vueuse/core";
+import usePageStore from "@/store/page";
+import { message } from "ant-design-vue";
 
 const canvas = ref<HTMLCanvasElement | null>();
+const ioS = ref();
 const props = defineProps<{
   imageSrc: string | null;
   scramble_id: number | undefined;
 }>();
 
+const pageStore = usePageStore();
+const nowReadingPage = ref<number>(1);
+const pageNumber = ref<number>();
+
 const { val: isLoading, set: setLoading } = useToggle(true);
+
 const parseURL = (imageSrc: string) => {
   const url = new URL(imageSrc);
   const path = url.pathname;
@@ -76,11 +88,58 @@ const getTileCount = (
   }
   return tileCount;
 };
+
+
+
+const setPageIOS = (el: HTMLElement | null | undefined) => {
+
+  const stop = useIntersectionObserver(
+    el,
+    ([{ isIntersecting }]) => {
+      if (isIntersecting && pageNumber.value) {
+        try {
+          pageStore.setPage(pageNumber.value);
+          nowReadingPage.value = pageNumber.value;
+        } catch (err: any) {
+          console.log(err);
+          message.error("尝试获取页码失败")
+        }
+      }
+    },
+    {
+      root: null,
+      rootMargin: "0px",
+      threshold: 0.5
+    }
+  )
+  return stop;
+}
+
 watch(
   () => props,
   () => {
+    if (ioS.value) {
+      ioS.value.stop();
+    }
+    setLoading(true);
     if (props.imageSrc === null) return;
+    const { imageIndex } = parseURL(props.imageSrc);
+    pageNumber.value = Number(imageIndex);
+    nextTick(() => {
+      ioS.value = setPageIOS(canvas.value);
+    });
+  },
+  { immediate: true }
+)
+
+watch(
+  () => nowReadingPage.value,
+  (page: Number) => {
+    if (props.imageSrc === null || !page || !pageNumber.value) return;
     const { albumID, imageIndex } = parseURL(props.imageSrc);
+    if (Math.abs(Number(page) - pageNumber.value) >= 5) {
+      return;
+    }
     const image = new Image();
     image.src = props.imageSrc;
     image.onload = () => {
@@ -123,12 +182,19 @@ watch(
         //dh	可选。要使用的图像的高度（就是裁剪之后的图片高度，放大或者缩放）
         ctx.drawImage(image, 0, sy, nw, sh, 0, dy, nw, sh);
       }
-
       setLoading(false);
     };
   },
   { immediate: true }
 );
+
+onUnmounted(
+  () => {
+    if (ioS.value) {
+      ioS.value.stop();
+    }
+  }
+)
 </script>
 <script lang="ts">
 export default {
@@ -138,11 +204,24 @@ export default {
 <style lang="css" scoped>
 .jm-image-wrapper {
   font-size: 0;
+  height: 100%;
 }
 
 .jm-image {
   box-shadow: 0 0 10px 0 gray;
   width: 100%;
   margin-top: 15px;
+}
+
+.image-footer {
+  display: flex;
+  justify-items: center;
+  justify-content: center;
+}
+
+#page-number {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0 10px;
 }
 </style>

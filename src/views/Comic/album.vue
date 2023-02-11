@@ -94,6 +94,7 @@
                                             }}
                                         </template>
                                         <a-button
+                                            @click="router.push(`/comic/${albumInfo?.id}/${lastViewedRecord?.cid}`)"
                                             :type="lastViewedRecord === null && !historyFailed ? 'default' : 'primary'"
                                             :disabled="historyFailed || lastViewedRecord === null">
                                             <history-outlined />
