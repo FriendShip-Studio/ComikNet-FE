@@ -134,7 +134,7 @@ watch(
 
 watch(
   () => nowReadingPage.value,
-  (page: Number) => {
+  (page: number) => {
     if (props.imageSrc === null || !page || !pageNumber.value) return;
     const { albumID, imageIndex } = parseURL(props.imageSrc);
     if (Math.abs(Number(page) - pageNumber.value) >= 5) {
@@ -205,6 +205,8 @@ export default {
 .jm-image-wrapper {
   font-size: 0;
   height: 100%;
+  padding-top: 86.20px;
+  margin-top: -86.20px;
 }
 
 .jm-image {

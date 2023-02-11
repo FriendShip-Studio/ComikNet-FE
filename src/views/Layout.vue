@@ -1,6 +1,9 @@
 <template>
   <header id="header">
-    <div id="header-content" :style="{ width: $route.meta.expand ? '100%' : '1200px' }">
+    <div
+      id="header-content"
+      :style="{ width: $route.meta.expand ? '100%' : '1200px' }"
+    >
       <div id="main-title">
         <router-link to="/" class="nav-link">ComikNet</router-link>
       </div>
@@ -9,9 +12,17 @@
       </div>
 
       <div id="search-box">
-        <a-tooltip placement="topRight" title="若要使用标签搜索: 每个标签以空格分开，在每个标签前加上“+”表示条件叠加，
-        加上“-”表示剔除，什么都不加代表只要包含其中一个标签都展示">
-          <a-input-search v-model:value="searchQuery" placeholder="搜索..." enter-button @search="onSearch">
+        <a-tooltip
+          placement="topRight"
+          title="若要使用标签搜索: 每个标签以空格分开，在每个标签前加上“+”表示条件叠加，
+        加上“-”表示剔除，什么都不加代表只要包含其中一个标签都展示"
+        >
+          <a-input-search
+            v-model:value="searchQuery"
+            placeholder="搜索..."
+            enter-button
+            @search="onSearch"
+          >
             <template #addonBefore>
               <label>使用 </label>
               <a-select :value="useEngine">
@@ -59,12 +70,8 @@
   <router-view />
 
   <footer id="footer">
-    <div>
-      ComikNet © Friendship Studio 2023
-    </div>
-    <div>
-      ComikNet Insider Preview 内部构建版本
-    </div>
+    <div>ComikNet © Friendship Studio 2023</div>
+    <div>ComikNet Insider Preview 内部构建版本</div>
   </footer>
 </template>
 
@@ -207,7 +214,8 @@ const onSearch = async () => {
   flex-grow: 1;
   align-self: center;
   display: flex;
-  margin-top: 64px;
+  position: relative;
+  transform: translateY(64px);
 }
 
 .content {
