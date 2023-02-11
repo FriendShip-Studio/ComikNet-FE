@@ -3,7 +3,7 @@ import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import { message } from "ant-design-vue";
 import { ApiRequest } from "@/models/requests";
 
-const BE_URL = "http://localhost:8000"
+const BE_URL = "/api";
 
 const requests = axios.create({
   baseURL: BE_URL,
@@ -13,7 +13,7 @@ const requests = axios.create({
 });
 
 const picTestReq = axios.create({
-  timeout: 15000
+  timeout: 15000,
 });
 
 const captchaReq = axios.create({

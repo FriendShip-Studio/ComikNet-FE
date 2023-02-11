@@ -4,7 +4,7 @@ import { message } from "ant-design-vue";
 import { HistoryRecord, Comment } from "@/models/database";
 
 const requests = axios.create({
-    baseURL: "http://localhost:8080",
+    baseURL: "/database",
     timeout: 30000,
     withCredentials: true,
     headers: {},
